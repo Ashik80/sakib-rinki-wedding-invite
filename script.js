@@ -73,10 +73,94 @@
         intro.classList.add("is-done");
         document.documentElement.classList.add("is-open");
         document.body.classList.remove("intro-active");
+        drawAllIn($(".hero")); // line art draws itself as the curtain clears
       }, 1420);
       setTimeout(function () { intro.remove(); }, 2150);
     });
   })();
+
+  /* ============ 1b. Self-drawing line art ============
+     Inline decorative SVGs reveal with a stroke-draw effect: each stroke
+     starts fully dashed-out and transitions to solid (stroke-dashoffset
+     L -> 0), staggered so the artwork appears to be drawn by hand.
+     Triggers: hero pieces when the envelope opens, ornament/icon pieces
+     when their section scrolls into view, the footer sprig near the page
+     end, and the RSVP check when a response is sent. */
+  var DRAW_SELECTORS = [
+    ".hero__garland svg", ".sprig svg", ".ornament svg", ".hero__scroll svg",
+    ".event-card__icon svg", ".details-card__icon svg", ".rsvp__done svg",
+  ].join(", ");
+  var drawItems = [];
+
+  function initDrawOn() {
+    $$(DRAW_SELECTORS).forEach(function (svg) {
+      var shapes = $$("path, line, circle, polyline, rect", svg);
+      var iconLike = !!svg.closest(".event-card__icon, .details-card__icon, .hero__scroll, .rsvp__done");
+      var dur = iconLike ? 0.7 : 1.15;
+      var stagger = iconLike ? 0.06 : 0.09;
+
+      var items = [];
+      shapes.forEach(function (el) {
+        var cs = window.getComputedStyle(el);
+        var isStroke = cs.stroke !== "none" && parseFloat(cs.strokeWidth) > 0;
+        if (isStroke) {
+          var len;
+          try { len = el.getTotalLength(); } catch (e) { return; }
+          if (!isFinite(len) || len <= 0) return;
+          var delay = items.length * stagger;
+          el.style.strokeDasharray = String(len);
+          el.style.strokeDashoffset = String(len);
+          el.style.transition =
+            "stroke-dashoffset " + dur + "s cubic-bezier(0.4, 0, 0.2, 1) " + delay.toFixed(2) + "s";
+          items.push({ el: el }); // strokes reveal via dashoffset -> 0
+        } else if (cs.fill !== "none") {
+          // solid dots: fade in once the strokes around them appear
+          el.style.opacity = "0";
+          el.style.transition =
+            "opacity 0.45s ease " + (items.length * stagger + dur * 0.55).toFixed(2) + "s";
+          items.push({ el: el, hidden: true });
+        }
+      });
+      if (!items.length) return;
+      drawItems.push({
+        svg: svg,
+        items: items,
+        manual: !!svg.closest(".rsvp__done"), // drawn on submit, not on reveal
+        drawn: false,
+      });
+    });
+
+    // No intro? The page is already open — draw the hero now.
+    if (document.documentElement.classList.contains("is-open")) {
+      drawAllIn($(".hero"));
+    }
+  }
+
+  function drawAllIn(root) {
+    drawItems.forEach(function (d) {
+      if (d.drawn || d.manual) return;
+      if (root && root !== document && !root.contains(d.svg)) return;
+      d.drawn = true;
+      d.items.forEach(function (it) {
+        if (it.hidden) {
+          it.el.style.opacity = "1";
+        } else {
+          it.el.style.strokeDashoffset = "0";
+        }
+      });
+    });
+  }
+
+  function drawRsvpCheck() {
+    drawItems.forEach(function (d) {
+      if (!d.manual || d.drawn) return;
+      d.drawn = true;
+      d.items.forEach(function (it) {
+        if (it.hidden) it.el.style.opacity = "1";
+        else it.el.style.strokeDashoffset = "0";
+      });
+    });
+  }
 
   /* ============ 2. Theme + text hydration ============ */
   if (cfg.theme) document.documentElement.setAttribute("data-theme", cfg.theme);
@@ -676,7 +760,9 @@
       if (successEl && msg) successEl.textContent = msg;
       form.hidden = true;
       done.hidden = false;
+      void done.offsetWidth; // render the hidden stroke state before drawing
       done.classList.add("reveal", "is-in");
+      drawRsvpCheck();
       petalBurst(done);
     }
 
@@ -803,6 +889,10 @@
 
   /* ============ 11. Petals, parallax, reveals ============ */
 
+  // Register every decorative SVG for the draw-on effect (all sections
+  // have rendered by now, so JS-injected icons are included).
+  initDrawOn();
+
   // Drifting rose petals in the hero.
   (function initPetals() {
     var wrap = $("#heroPetals");
@@ -892,13 +982,21 @@
         entries.forEach(function (e) {
           if (e.isIntersecting) {
             e.target.classList.add("is-in");
+            drawAllIn(e.target); // reveal the line art inside this section
             io.unobserve(e.target);
           }
         });
       }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
       $$(".reveal").forEach(function (el) { io.observe(el); });
+      // Footer sprig draws when the footer approaches.
+      var footer = $(".footer");
+      if (footer) {
+        io.observe(footer);
+        footer.classList.add("reveal");
+      }
     } else {
       $$(".reveal").forEach(function (el) { el.classList.add("is-in"); });
+      drawAllIn(document);
     }
   })();
 })();

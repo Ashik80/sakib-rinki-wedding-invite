@@ -30,6 +30,10 @@ Signature additions:
   entrance
 - **Gold-foil accents** — foil monogram seal, ampersand and rules with a
   slow sheen; a gold thread fills the story timeline as you scroll
+- **Self-drawing line art** — the garlands, sprigs, ornament divider,
+  event/detail icons, footer sprig and the RSVP check draw themselves in
+  (staggered stroke reveal) as the envelope opens or their section scrolls
+  into view
 - **Optional hero photo** — set `heroPhoto.src` to place the couple inside
   the arch, wine-tinted to stay on-palette
 - **Photo gallery** — mosaic grid with arched tiles, Parisienne captions,
@@ -66,7 +70,7 @@ custom sections, custom typography, priority delivery.
 | `script.js`  | Rendering, countdown, gallery, music, RSVP, FX.  |
 | `assets/photos/` | Gallery images (placeholder art included).   |
 | `assets/og-cover.png` | 1200×630 social share preview. Regenerate per client. |
-| `assets/music/theme.mp3` | Placeholder track — swap for the client's song. |
+| `assets/music/theme.mp3` | Soothing bansuri loop (see attribution in `config.js`). Swap for the client's song when known. |
 
 ## Customising for a client
 

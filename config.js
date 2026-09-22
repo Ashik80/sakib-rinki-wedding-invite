@@ -204,6 +204,12 @@ const INVITE_CONFIG = {
   // Replace assets/music/theme.mp3 with the client's song (mp3, ≤2 MB is
   // ideal). "autoplay" starts it on the guest's first tap — browsers
   // block silent autoplay, so this is the smoothest allowed behaviour.
+  //
+  // Default track attribution (keep until replaced by the client's song):
+  //   "Indian Folk Classical Flute Music" by MayankSingh33 (Wikimedia
+  //   Commons) — soothing bansuri with tanpura drone, trimmed and
+  //   normalised for looping. Licensed CC BY-SA 4.0:
+  //   commons.wikimedia.org/wiki/File:Indian_Folk_Classical_Flute_Music_(1).wav
   music: {
     enabled: true,
     src: "assets/music/theme.mp3",

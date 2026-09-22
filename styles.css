@@ -641,8 +641,12 @@ html.is-open .anim--6 { transition-delay: 0.82s; }
 
 .chapter__dot {
   position: absolute;
-  left: -31px;
+  /* 13px dot centred on the thread: thread centre = 12px in the
+     timeline (left 11px + 1px half-width); dot left = 12 − 6.5 = 5.5px
+     in timeline coords = −30.5px from the chapter's padded edge. */
+  left: -30.5px;
   top: 5px;
+  z-index: 1; /* keep both threads behind the dots */
   width: 13px;
   height: 13px;
   border-radius: 50%;
@@ -2023,9 +2027,15 @@ button:focus-visible {
   }
 
   .story__timeline::before {
-    left: 50%;
+    left: calc(50% - 1px);
     top: 4px;
     bottom: 4px;
+  }
+
+  .story__fill {
+    left: calc(50% - 1px);
+    top: 4px;
+    max-height: calc(100% - 8px);
   }
 
   .chapter {
@@ -2041,8 +2051,9 @@ button:focus-visible {
     text-align: left;
   }
 
-  .chapter__dot { left: auto; right: -7.5px; }
-  .chapter:nth-child(even) .chapter__dot { right: auto; left: -7.5px; }
+  /* 13px dots centred exactly on the 50% axis (6.5px = half dot) */
+  .chapter__dot { left: auto; right: -6.5px; }
+  .chapter:nth-child(even) .chapter__dot { right: auto; left: -6.5px; }
 
   .chapter__text { max-width: 340px; }
   .chapter:nth-child(odd) .chapter__text { margin-left: auto; }
@@ -2160,8 +2171,6 @@ button:focus-visible {
   }
 
   .countdown__num { font-size: 54px; }
-
-  .story__fill { left: 50%; }
 
   .details { padding: 104px 48px; }
 
