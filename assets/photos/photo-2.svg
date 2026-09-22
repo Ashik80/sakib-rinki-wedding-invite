@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fdf6f1"/>
+      <stop offset="1" stop-color="#f3e3dc"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1100" fill="url(#bg)"/>
+  <rect x="46" y="46" width="1508" height="1008" fill="none" stroke="#bd7f88" stroke-opacity="0.5" stroke-width="2"/>
+  <rect x="64" y="64" width="1472" height="972" fill="none" stroke="#bd7f88" stroke-opacity="0.28" stroke-width="1"/>
+  <g fill="none" stroke="#9d5560" stroke-width="4" stroke-linecap="round">
+    <path d="M240 620 C380 548 420 430 400 330 C510 420 520 540 470 640 Z"/>
+    <path d="M330 640 c-46 52 -46 98 0 150 c46 -52 46 -98 0 -150 Z"/>
+    <path d="M1360 620 C1220 548 1180 430 1200 330 C1090 420 1080 540 1130 640 Z"/>
+    <path d="M1270 640 c46 52 46 98 0 150 c-46 -52 -46 -98 0 -150 Z"/>
+    <path d="M430 690 C610 630 990 630 1170 690"/>
+    <path d="M560 690 c-40 -70 -34 -140 18 -208 c52 68 58 138 18 208"/>
+    <path d="M800 700 c-46 -82 -40 -164 22 -244 c62 80 68 162 22 244"/>
+    <path d="M1040 690 c-40 -70 -34 -140 18 -208 c52 68 58 138 18 208"/>
+  </g>
+  <circle cx="800" cy="392" r="7" fill="#9d5560"/>
+  <text x="800" y="880" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="52" fill="#9d5560" letter-spacing="14">save the date</text>
+  <text x="800" y="1010" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="28" fill="#b08a91" letter-spacing="4">placeholder &#183; replace with couple photo</text>
+</svg>

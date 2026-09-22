@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fdf6f1"/>
+      <stop offset="1" stop-color="#f1ddd6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <rect x="46" y="46" width="1108" height="1108" fill="none" stroke="#bd7f88" stroke-opacity="0.5" stroke-width="2"/>
+  <rect x="64" y="64" width="1072" height="1072" fill="none" stroke="#bd7f88" stroke-opacity="0.28" stroke-width="1"/>
+  <g fill="none" stroke="#9d5560" stroke-width="5" stroke-linecap="round">
+    <path d="M600 812 C470 710 392 634 392 540 C392 478 438 436 492 436 C532 436 578 460 600 506 C622 460 668 436 708 436 C762 436 808 478 808 540 C808 634 730 710 600 812 Z"/>
+    <path d="M600 812 C600 872 570 906 512 936"/>
+    <path d="M512 936 c-40 -36 -46 -74 -18 -114"/>
+    <path d="M512 936 c44 -28 58 -62 44 -104"/>
+  </g>
+  <g fill="none" stroke="#bd7f88" stroke-width="3.4" stroke-linecap="round">
+    <path d="M430 300 l-20 -52 M410 300 l20 -52" transform="translate(30 0)"/>
+    <path d="M790 260 l-20 -52 M770 260 l20 -52"/>
+  </g>
+  <text x="600" y="1078" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="30" fill="#b08a91" letter-spacing="4">placeholder &#183; replace with couple photo</text>
+</svg>

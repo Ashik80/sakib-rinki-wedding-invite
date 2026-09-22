@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fdf6f1"/>
+      <stop offset="1" stop-color="#f3e1d6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <rect x="46" y="46" width="1108" height="1108" fill="none" stroke="#bd7f88" stroke-opacity="0.5" stroke-width="2"/>
+  <rect x="64" y="64" width="1072" height="1072" fill="none" stroke="#bd7f88" stroke-opacity="0.28" stroke-width="1"/>
+  <g fill="none" stroke="#9d5560" stroke-width="5" stroke-linecap="round">
+    <circle cx="600" cy="520" r="52"/>
+    <circle cx="600" cy="520" r="96"/>
+    <circle cx="600" cy="520" r="142"/>
+    <path d="M600 662 C600 742 560 800 480 852"/>
+    <path d="M600 662 C600 742 640 800 720 852"/>
+    <path d="M480 852 c-46 -10 -66 -38 -60 -84 c44 10 64 38 60 84 Z"/>
+    <path d="M720 852 c46 -10 66 -38 60 -84 c-44 10 -64 38 -60 84 Z"/>
+    <path d="M486 852 C520 902 560 934 600 944"/>
+    <path d="M714 852 C680 902 640 934 600 944"/>
+  </g>
+  <g fill="#9d5560">
+    <circle cx="600" cy="520" r="9"/>
+    <circle cx="418" cy="420" r="5"/>
+    <circle cx="782" cy="420" r="5"/>
+    <circle cx="492" cy="308" r="5"/>
+    <circle cx="708" cy="308" r="5"/>
+  </g>
+  <text x="600" y="1078" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="30" fill="#b08a91" letter-spacing="4">placeholder &#183; replace with couple photo</text>
+</svg>
