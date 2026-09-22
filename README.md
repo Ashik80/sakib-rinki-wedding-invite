@@ -4,9 +4,11 @@ Tier: **Signature / Standard (৳3,990)** · Mobile-first single-page digital
 invitation. Everything in the Classic tier, plus the Signature upgrades.
 
 Romantic **rosewood** design — blush paper, deep wine and rose gold — with a
-garlanded arch hero, drifting petals, family welcome, live countdown, an
-**Our Story timeline**, multiple **event cards** with Google Maps + calendar
-links, a **photo gallery with fullscreen lightbox**, embedded venue map,
+**wax-sealed envelope intro**, garlanded arch hero (optional couple photo),
+drifting petals, **gold-foil accents**, family welcome, live countdown, an
+**Our Story timeline** with a scroll-filled gold thread, multiple **event
+cards** with icons, Google Maps + calendar links, a **photo gallery with
+fullscreen lightbox**, dress-code & gift **info cards**, embedded venue map,
 **RSVP form**, **background music**, three switchable colour themes and
 one-tap share.
 
@@ -23,19 +25,32 @@ Everything from Classic (৳2,990):
 
 Signature additions:
 
-- **Photo gallery** — mosaic grid, captions, fullscreen lightbox with
-  keyboard (←/→/Esc) and swipe navigation
-- **Multiple events** — three sample events (Mehendi, Akd, Walima); add or
-  remove freely in config
+- **Envelope intro** — a full-screen wax-sealed envelope; guests tap the
+  seal, the flap opens and the invitation reveals with the staggered hero
+  entrance
+- **Gold-foil accents** — foil monogram seal, ampersand and rules with a
+  slow sheen; a gold thread fills the story timeline as you scroll
+- **Optional hero photo** — set `heroPhoto.src` to place the couple inside
+  the arch, wine-tinted to stay on-palette
+- **Photo gallery** — mosaic grid with arched tiles, Parisienne captions,
+  fullscreen lightbox with keyboard (←/→/Esc), swipe and a slow Ken Burns
+  drift
+- **Multiple events** — three sample events (Mehendi, Akd, Walima) with
+  per-event icons, ticket-stub date chips, Google Maps + Add-to-Calendar;
+  add or remove freely in config
 - **Couple story** — timeline chapter milestones with animated reveals
+- **Good-to-know cards** — dress code with colour swatches and a gift note
 - **RSVP** — name, attendance, guest count, per-event checkboxes, message;
-  delivered via WhatsApp (pre-typed) and/or a Formspree-style endpoint
+  delivered via WhatsApp (pre-typed) and/or a Formspree-style endpoint,
+  celebrated with a petal burst
 - **Background music** — floating player, gentle autoplay on the guest's
   first tap (browser policy prevents true silent autoplay), fade in/out,
   pauses when the tab is hidden
-- **Enhanced animations** — staggered hero entrance, drifting rose petals,
-  hero parallax, staggered scroll reveals, countdown pulse — all disabled
-  under `prefers-reduced-motion`
+- **Live countdown** — elegant serif numerals; flips to a "Today is the
+  day" blessing once the wedding date arrives
+- **Enhanced animations** — staggered hero entrance, drifting rose petals
+  that gust with scroll velocity, hero parallax, staggered scroll reveals,
+  countdown pulse
 - **More personalisation** — one-word theme switch (see below)
 
 Not in this tier (reserved for Luxury / Bespoke): premium cinematic scenes,
@@ -50,6 +65,7 @@ custom sections, custom typography, priority delivery.
 | `config.js`  | **Every client-specific value lives here.**      |
 | `script.js`  | Rendering, countdown, gallery, music, RSVP, FX.  |
 | `assets/photos/` | Gallery images (placeholder art included).   |
+| `assets/og-cover.png` | 1200×630 social share preview. Regenerate per client. |
 | `assets/music/theme.mp3` | Placeholder track — swap for the client's song. |
 
 ## Customising for a client
@@ -61,13 +77,26 @@ credit. Every field is commented.
 Fields that need small care:
 
 - `weddingDateTime` — ISO format with timezone, e.g.
-  `"2027-02-12T18:00:00+06:00"`. Drives the countdown.
+  `"2027-02-12T18:00:00+06:00"`. Drives the countdown; once it passes, the
+  countdown flips to the `countdownToday` blessing.
+- `ogImage` — the 1200×630 preview shown when the link is shared on
+  WhatsApp/Facebook. Replace `assets/og-cover.png` per client (photo or
+  monogram on brand colours).
+- `intro.enabled` — set `false` to skip the wax-sealed envelope intro.
+- `heroPhoto.src` — optional couple photo inside the hero arch
+  (portrait ~900×1200px); `tint` controls the wine overlay strength.
 - Each event's `mapQuery` — paste the venue name exactly as Google Maps
   knows it (or `23.7936,90.4043` style coordinates) so the map pins
-  correctly.
+  correctly. Each event's `icon` picks the medallion
+  (`mehendi` | `rings` | `crescent` | `floral`); the ticket date chip is
+  derived from `calDate` (or set `chip` explicitly).
 - `gallery.photos[].src` — drop webp/jpg files into `assets/photos/`
   (~1200px wide is plenty) and list them. `wide: true` gives a tile two
-  columns.
+  columns; `arched: true/false` overrides the automatic arch pattern
+  (every third square tile is arched by default).
+- `details.cards` — good-to-know cards after the gallery (dress code with
+  `swatches`, gift note…). Icons: `dress` | `gift` | `moon` | `ring` |
+  `floral`. Remove the block to hide the section.
 - `rsvp.whatsapp` — international format, digits only, no `+`
   (e.g. `8801712345678`). Set `rsvp.endpoint` to a Formspree URL to POST
   answers there instead/additionally.
@@ -107,5 +136,6 @@ drag the folder in. One URL per couple = the shareable link.
 ## Fonts
 
 Google Fonts loaded in `index.html`: Playfair Display (serif), Parisienne
-(script), Jost (sans), Noto Serif Bengali (Bangla text support). Bangla
+(script), Jost (sans), Amiri (Arabic — renders the Bismillah blessing as
+elegant calligraphy), Noto Serif Bengali (Bangla text support). Bangla
 renders correctly anywhere it appears (names, blessing, messages).

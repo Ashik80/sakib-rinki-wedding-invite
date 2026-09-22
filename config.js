@@ -13,6 +13,28 @@ const INVITE_CONFIG = {
        "sage"      — sage green & copper on warm white   */
   theme: "rosewood",
 
+  /* ---------- Social share preview ---------- */
+  // 1200×630 image shown when the link is shared on WhatsApp/Facebook.
+  // Replace assets/og-cover.png with a branded photo/monogram per client.
+  ogImage: "assets/og-cover.png",
+
+  /* ---------- Envelope intro ---------- */
+  // A wax-sealed envelope the guest taps to open — the page then reveals
+  // with the staggered hero entrance. Set enabled:false to skip it.
+  intro: {
+    enabled: true,
+    hint: "Tap the seal to open",
+  },
+
+  /* ---------- Hero photo (optional) ---------- */
+  // Put a couple photo behind the names, inside the hero arch.
+  // Portrait ~900×1200px works best. Leave src "" for the plain arch.
+  heroPhoto: {
+    src: "",
+    alt: "The happy couple",
+    tint: 0.55,          // 0–1, strength of the wine tint over the photo
+  },
+
   /* ---------- Couple ---------- */
   couple: {
     name1: "Sumaiya Karim",
@@ -43,6 +65,8 @@ const INVITE_CONFIG = {
 
   /* ---------- Countdown ---------- */
   countdownNote: "until our forever begins — In Shaa Allah",
+  // Shown in place of the numbers once the wedding day arrives.
+  countdownToday: "Today is the day — Alhamdulillah!",
 
   /* ---------- Our Story (timeline) ---------- */
   // Each chapter becomes one milestone on the timeline.
@@ -83,6 +107,7 @@ const INVITE_CONFIG = {
     {
       tag: "Pre-Wedding",
       name: "Mehendi Night",
+      icon: "mehendi",            // mehendi | rings | crescent | floral
       tagline: "an evening of henna, songs & laughter",
       date: "Thursday, 11 February 2027",
       time: "6:30 PM onwards",
@@ -97,6 +122,7 @@ const INVITE_CONFIG = {
     {
       tag: "Wedding Day",
       name: "Akd Ceremony",
+      icon: "rings",
       tagline: "the blessed union, followed by dinner",
       date: "Friday, 12 February 2027",
       time: "6:00 PM onwards",
@@ -111,6 +137,7 @@ const INVITE_CONFIG = {
     {
       tag: "Celebration",
       name: "Walima Reception",
+      icon: "crescent",
       tagline: "dinner, blessings & celebrations",
       date: "Saturday, 13 February 2027",
       time: "7:00 PM onwards",
@@ -123,6 +150,29 @@ const INVITE_CONFIG = {
       calTz: "Asia/Dhaka",
     },
   ],
+
+  /* ---------- Good to know (dress code, gifts…) ---------- */
+  // Each entry becomes an info card after the gallery.
+  // icon: "dress" | "gift" | "moon" | "ring" | "floral"
+  // "swatches" (optional) draws a row of dress-code colour dots.
+  details: {
+    eyebrow: "Good to Know",
+    title: "The",
+    titleAccent: "Details",
+    cards: [
+      {
+        icon: "dress",
+        title: "Dress Code",
+        text: "Garden formal — soft pastels, flowing fabrics and festive colour. We can't wait to see the palette you bring.",
+        swatches: ["#5B1C2E", "#B76E79", "#E9C8CD", "#F2E5DC"],
+      },
+      {
+        icon: "gift",
+        title: "Your Presence Is the Gift",
+        text: "Should you still wish to bless us, a small contribution towards our honeymoon fund would mean the world.",
+      },
+    ],
+  },
 
   /* ---------- Venue / map ---------- */
   // Shown in the map section (usually your main event).
