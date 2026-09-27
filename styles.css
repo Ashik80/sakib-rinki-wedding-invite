@@ -1465,14 +1465,6 @@ html[data-lang="bn"] .intro__hint {
   text-transform: none;
 }
 
-/* "The Wedding of" stays English in both languages — keep its exact
-   Latin small-caps treatment. */
-html[data-lang="bn"] [data-i18n="heroEyebrow"] {
-  font-size: 10.5px;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-}
-
 /* The S&Z monogram (hero seal, envelope seals) is Latin initials — keep
    the Playfair look identical in both languages. Bengali stays as the
    fallback in case a client uses Bengali initials. */

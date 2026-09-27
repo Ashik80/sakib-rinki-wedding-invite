@@ -408,11 +408,10 @@ const INVITE_TRANSLATIONS = {
     closing: "ভালোবাসা ও দোয়াসহ আপনার আগমনের প্রতীক্ষায়",
     credit: "ভালোবাসা দিয়ে নির্মিত \u2665 \u2014 Your Studio Name",
 
-    /* Fixed interface strings — headings, buttons, form labels…
-       (heroEyebrow, "The Wedding of", deliberately stays English in
-       both languages — simply omit it here to keep the original.) */
+    /* Fixed interface strings — headings, buttons, form labels… */
     ui: {
       nameJoin: "ও",
+      heroEyebrow: "শুভ বিবাহ অনুষ্ঠান",
       scroll: "স্ক্রল",
       saveEyebrow: "তারিখটি রাখুন",
       countdownTitle: "গণনা চলছে",
