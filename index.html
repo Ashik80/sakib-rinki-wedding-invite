@@ -24,7 +24,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Parisienne&family=Jost:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Bengali:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Parisienne&family=Jost:wght@300;400;500;600&family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Serif+Bengali:wght@400;600;700&family=Noto+Sans+Bengali:wght@400;500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
   <noscript><style>.anim{opacity:1;transform:none}.intro{display:none}</style></noscript>
@@ -84,11 +84,11 @@
             <span class="seal__initials" data-initials>S&amp;Z</span>
           </div>
 
-          <p class="eyebrow eyebrow--light anim anim--3">The Wedding of</p>
+          <p class="eyebrow eyebrow--light anim anim--3" data-i18n="heroEyebrow">The Wedding of</p>
 
           <h1 class="hero__names anim anim--4">
             <span class="hero__name" data-name1>Sumaiya Karim</span>
-            <span class="hero__amp" aria-hidden="true">&amp;</span>
+            <span class="hero__amp" aria-hidden="true" data-amp>&amp;</span>
             <span class="hero__name" data-name2>Zayan Ahmed</span>
           </h1>
 
@@ -117,7 +117,7 @@
       </div>
 
       <div class="hero__scroll" aria-hidden="true">
-        <span>Scroll</span>
+        <span data-i18n="scroll">Scroll</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M6 9 l6 6 l6 -6" />
         </svg>
@@ -157,25 +157,25 @@
     <!-- ============ COUNTDOWN ============ -->
     <section class="countdown" id="countdown">
       <div class="countdown__panel">
-        <p class="eyebrow eyebrow--accent">Save the Date</p>
-        <h2 class="section-title">Counting Down<br /><em>to Forever</em></h2>
+        <p class="eyebrow eyebrow--accent" data-i18n="saveEyebrow">Save the Date</p>
+        <h2 class="section-title" data-i18n="countdownTitle">Counting Down<br /><em>to Forever</em></h2>
 
-        <div class="countdown__grid" role="timer" aria-label="Countdown to the wedding">
+        <div class="countdown__grid" role="timer" aria-label="Countdown to the wedding" data-i18n-attr="countdownAria:aria-label">
           <div class="countdown__cell">
             <span class="countdown__num" id="cdDays">—</span>
-            <span class="countdown__label">Days</span>
+            <span class="countdown__label" data-i18n="cdDays">Days</span>
           </div>
           <div class="countdown__cell">
             <span class="countdown__num" id="cdHours">—</span>
-            <span class="countdown__label">Hours</span>
+            <span class="countdown__label" data-i18n="cdHours">Hours</span>
           </div>
           <div class="countdown__cell">
             <span class="countdown__num" id="cdMinutes">—</span>
-            <span class="countdown__label">Minutes</span>
+            <span class="countdown__label" data-i18n="cdMinutes">Minutes</span>
           </div>
           <div class="countdown__cell">
             <span class="countdown__num" id="cdSeconds">—</span>
-            <span class="countdown__label">Seconds</span>
+            <span class="countdown__label" data-i18n="cdSeconds">Seconds</span>
           </div>
         </div>
 
@@ -202,8 +202,8 @@
 
     <!-- ============ EVENTS ============ -->
     <section class="events" id="events">
-      <p class="eyebrow eyebrow--accent">When &amp; Where</p>
-      <h2 class="section-title">Three Days of <em>Joy</em></h2>
+      <p class="eyebrow eyebrow--accent" data-i18n="eventsEyebrow">When &amp; Where</p>
+      <h2 class="section-title" data-i18n="eventsTitle">Three Days of <em>Joy</em></h2>
 
       <div class="events__list" id="eventList">
         <!-- Event cards rendered from config.js -->
@@ -230,7 +230,7 @@
       <div class="gallery__grid" id="galleryGrid">
         <!-- Photo tiles rendered from config.js -->
       </div>
-      <p class="gallery__hint">Tap a photo to view it close-up</p>
+      <p class="gallery__hint" data-i18n="galleryHint">Tap a photo to view it close-up</p>
     </section>
 
     <!-- ============ GOOD TO KNOW ============ -->
@@ -247,18 +247,19 @@
     <section class="venue" id="venue">
       <div class="venue__split">
         <div class="venue__info">
-          <p class="eyebrow eyebrow--accent">The Venue</p>
-          <h2 class="section-title">Find Us <em>There</em></h2>
+          <p class="eyebrow eyebrow--accent" data-i18n="venueEyebrow">The Venue</p>
+          <h2 class="section-title" data-i18n="venueTitle">Find Us <em>There</em></h2>
 
           <p class="venue__name" data-venue-name>Crystal Hall, Radisson Blu Dhaka Water Garden</p>
           <p class="venue__address" data-venue-address>Airport Road, Dhaka 1229</p>
-          <a class="link-btn venue__directions" data-directions href="https://www.google.com/maps/search/?api=1&query=Radisson+Blu+Dhaka+Water+Garden" target="_blank" rel="noopener">Open in Google Maps ↗</a>
+          <a class="link-btn venue__directions" data-directions href="https://www.google.com/maps/search/?api=1&query=Radisson+Blu+Dhaka+Water+Garden" target="_blank" rel="noopener"><span data-i18n="openMaps">Open in Google Maps ↗</span></a>
         </div>
 
         <div class="venue__frame">
           <iframe
             id="venueMap"
             title="Map to the wedding venue"
+            data-i18n-attr="mapFrameTitle:title"
             src="https://maps.google.com/maps?q=Radisson%20Blu%20Dhaka%20Water%20Garden&z=15&output=embed"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
@@ -270,32 +271,32 @@
     <!-- ============ RSVP ============ -->
     <section class="rsvp" id="rsvp">
       <div class="rsvp__panel">
-        <p class="eyebrow eyebrow--light">Will You Join Us?</p>
-        <h2 class="section-title">Kindly <em>Respond</em></h2>
+        <p class="eyebrow eyebrow--light" data-i18n="rsvpEyebrow">Will You Join Us?</p>
+        <h2 class="section-title" data-i18n="rsvpTitle">Kindly <em>Respond</em></h2>
         <p class="rsvp__note" data-rsvp-note>Kindly respond by 25 January 2027. We can't wait to celebrate with you!</p>
 
         <form class="rsvp__form" id="rsvpForm" novalidate>
           <div class="field">
-            <label class="field__label" for="rsvpName">Your Name</label>
-            <input class="field__input" type="text" id="rsvpName" name="name" autocomplete="name" placeholder="e.g. Rahim Uddin &amp; family" required />
+            <label class="field__label" for="rsvpName" data-i18n="yourName">Your Name</label>
+            <input class="field__input" type="text" id="rsvpName" name="name" autocomplete="name" placeholder="e.g. Rahim Uddin &amp; family" data-i18n-attr="namePlaceholder:placeholder" required />
           </div>
 
           <fieldset class="field field--choice">
-            <legend class="field__label">Will you be attending?</legend>
+            <legend class="field__label" data-i18n="attending">Will you be attending?</legend>
             <div class="choice">
               <label class="choice__opt">
                 <input type="radio" name="attending" value="yes" checked />
-                <span>Joyfully, yes</span>
+                <span data-i18n="yes">Joyfully, yes</span>
               </label>
               <label class="choice__opt">
                 <input type="radio" name="attending" value="no" />
-                <span>Regretfully, no</span>
+                <span data-i18n="no">Regretfully, no</span>
               </label>
             </div>
           </fieldset>
 
           <div class="field" id="rsvpGuestsWrap">
-            <label class="field__label" for="rsvpGuests">Number of Guests</label>
+            <label class="field__label" for="rsvpGuests" data-i18n="guestsLabel">Number of Guests</label>
             <select class="field__input" id="rsvpGuests" name="guests">
               <option value="1">1 guest</option>
               <option value="2" selected>2 guests</option>
@@ -307,19 +308,19 @@
           </div>
 
           <fieldset class="field field--choice" id="rsvpEventsWrap">
-            <legend class="field__label">Which events will you attend?</legend>
+            <legend class="field__label" data-i18n="whichEvents">Which events will you attend?</legend>
             <div class="choice" id="rsvpEvents">
               <!-- Event checkboxes rendered from config.js -->
             </div>
           </fieldset>
 
           <div class="field">
-            <label class="field__label" for="rsvpMessage">A Message for the Couple <span class="field__optional">(optional)</span></label>
-            <textarea class="field__input field__input--area" id="rsvpMessage" name="message" rows="3" placeholder="Your wishes, duas &amp; blessings…"></textarea>
+            <label class="field__label" for="rsvpMessage" data-i18n="messageLabel">A Message for the Couple <span class="field__optional">(optional)</span></label>
+            <textarea class="field__input field__input--area" id="rsvpMessage" name="message" rows="3" placeholder="Your wishes, duas &amp; blessings…" data-i18n-attr="messagePlaceholder:placeholder"></textarea>
           </div>
 
           <button class="rsvp__submit" id="rsvpSubmit" type="submit">
-            <span class="rsvp__submit-label">Send RSVP</span>
+            <span class="rsvp__submit-label" data-i18n="send">Send RSVP</span>
           </button>
         </form>
 
@@ -361,7 +362,7 @@
             <line x1="8.3" y1="10.8" x2="15.7" y2="7.2" />
             <line x1="8.3" y1="13.2" x2="15.7" y2="16.8" />
           </svg>
-          Share this Invitation
+          <span data-i18n="shareBtn">Share this Invitation</span>
         </button>
 
         <p class="footer__hashtag" data-hashtag>#SumaiyaAndZayan</p>
@@ -391,12 +392,22 @@
       <line x1="8.3" y1="10.8" x2="15.7" y2="7.2" />
       <line x1="8.3" y1="13.2" x2="15.7" y2="16.8" />
     </svg>
-    <span>Share</span>
+    <span data-i18n="share">Share</span>
+  </button>
+
+  <!-- Floating language toggle (English ⇄ বাংলা) -->
+  <button class="lang-btn" id="langBtn" type="button" aria-label="Switch language" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3c2.7 2.6 4.1 5.6 4.1 9s-1.4 6.4-4.1 9c-2.7-2.6-4.1-5.6-4.1-9s1.4-6.4 4.1-9Z" />
+    </svg>
+    <span class="lang-btn__label" id="langBtnLabel">বাংলা</span>
   </button>
 
   <!-- Photo lightbox -->
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" hidden>
-    <button class="lightbox__close" id="lbClose" type="button" aria-label="Close photo viewer">
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" data-i18n-attr="lbDialog:aria-label" hidden>
+    <button class="lightbox__close" id="lbClose" type="button" aria-label="Close photo viewer" data-i18n-attr="lbClose:aria-label">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6 l12 12 M18 6 l-12 12"/></svg>
     </button>
     <figure class="lightbox__stage">
@@ -406,10 +417,10 @@
         <span id="lbCount"></span>
       </figcaption>
     </figure>
-    <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" type="button" aria-label="Previous photo">
+    <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" type="button" aria-label="Previous photo" data-i18n-attr="lbPrev:aria-label">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 l-7 7 7 7"/></svg>
     </button>
-    <button class="lightbox__nav lightbox__nav--next" id="lbNext" type="button" aria-label="Next photo">
+    <button class="lightbox__nav lightbox__nav--next" id="lbNext" type="button" aria-label="Next photo" data-i18n-attr="lbNext:aria-label">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5 l7 7 -7 7"/></svg>
     </button>
   </div>

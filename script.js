@@ -1,13 +1,16 @@
 /* ============================================================
    Signature (Standard) Wedding Invitation — behaviour
-   All content comes from INVITE_CONFIG (config.js).
+   All content comes from INVITE_CONFIG (config.js). Bangla
+   strings live in INVITE_TRANSLATIONS (same file) and are
+   merged over the English config at runtime.
 
-   1. Envelope intro               7. Countdown (+ today mode)
-   2. Theme + text hydration       8. Background music
-   3. Name fitting / hero photo    9. RSVP form (+ petal burst)
-   4. Story timeline (+ gold fill) 10. Share
-   5. Event cards (icons, chips)   11. Petals / parallax / reveals
-   6. Gallery + lightbox
+   1. Language engine (English ⇄ বাংলা)
+   2. Envelope intro               8. Background music
+   3. Self-drawing line art        9. RSVP form (+ petal burst)
+   4. Theme + text hydration      10. Share
+   5. Story timeline (+ fill)     11. Gallery + lightbox
+   6. Event cards (icons, chips)  12. Map
+   7. Countdown (+ today mode)    13. Petals / parallax / reveals
    ============================================================ */
 (function () {
   "use strict";
@@ -15,6 +18,7 @@
   // Top-level `const` in config.js creates a global lexical binding, not a
   // window property — so read the binding directly and only fall back to window.
   var cfg = typeof INVITE_CONFIG !== "undefined" ? INVITE_CONFIG : window.INVITE_CONFIG;
+  var translations = typeof INVITE_TRANSLATIONS !== "undefined" ? INVITE_TRANSLATIONS : {};
   if (!cfg) return;
 
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
@@ -26,12 +30,153 @@
     });
   }
 
-  /* ============ 1. Envelope intro ============
+  /* ============ 1. Language engine ============
+     The English content is the config itself. Any other language is a
+     deep merge of the config with its translation block (config.js →
+     INVITE_TRANSLATIONS), so untranslated fields fall back to English.
+     Everything that renders text goes through a "apply" function that
+     can run again whenever the guest flips the toggle. */
+
+  var LANG_KEY = "invite-lang";
+  var BN_DIGITS = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+
+  function getQueryParam(name) {
+    var m = new RegExp("[?&]" + name + "=([^&]*)").exec(location.search);
+    return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : null;
+  }
+
+  function availableLangs() {
+    return Object.keys(translations).filter(function (l) { return translations[l]; });
+  }
+
+  /* Every guest-facing language: English (the config itself) plus any
+     translation blocks. */
+  function allLangs() {
+    var langs = availableLangs();
+    if (langs.indexOf("en") === -1) langs.unshift("en");
+    return langs;
+  }
+
+  function resolveLang() {
+    var asked = getQueryParam("lang");
+    if (asked && translations[asked]) return asked;
+    try {
+      var saved = localStorage.getItem(LANG_KEY);
+      if (saved && translations[saved]) return saved;
+    } catch (e) { /* storage unavailable */ }
+    var def = cfg.localization && cfg.localization.default;
+    if (def && translations[def]) return def;
+    return "en";
+  }
+
+  function merge(base, over) {
+    if (over === undefined) return base;
+    if (Array.isArray(over)) {
+      // Parallel arrays merge element-wise: a translated events/chapters
+      // list can carry only the display strings and still inherit the
+      // operational fields (dates, icons, map queries) of its English twin.
+      if (!Array.isArray(base)) return over;
+      return base
+        .map(function (item, i) { return merge(item, over[i]); })
+        .concat(over.slice(base.length));
+    }
+    if (!over || typeof over !== "object") return over;
+    if (!base || typeof base !== "object" || Array.isArray(base)) return over;
+    var out = {}, k;
+    for (k in base) out[k] = merge(base[k], over[k]);
+    for (k in over) if (!(k in base)) out[k] = over[k];
+    return out;
+  }
+
+  var lang = resolveLang();
+
+  function dict(l) {
+    var t = translations[l];
+    return t ? merge(cfg, t) : cfg;
+  }
+
+  var D = dict(lang); // the active dictionary — every renderer reads this
+
+  function nameJoin() { return (D.ui && D.ui.nameJoin) || "&"; }
+
+  /* Localised digits — Bangla mode renders ০১২৩৪৫৬৭৮৯ (ui.digits). */
+  function locNum(val) {
+    var s = String(val);
+    if (!(D.ui && D.ui.digits)) return s;
+    return s.replace(/[0-9]/g, function (d) { return BN_DIGITS[+d]; });
+  }
+
+  /* Fixed interface strings ("chrome") are marked in index.html with
+     data-i18n / data-i18n-attr. The English markup is snapshotted once
+     so switching back restores it exactly; other languages come from
+     translations.<lang>.ui. */
+  var chromeEN = {};
+  var chromeAttrs = {};
+  var enGuestOptions = [];
+
+  function snapshotChrome() {
+    $$("[data-i18n]").forEach(function (el) {
+      chromeEN[el.getAttribute("data-i18n")] = el.innerHTML;
+    });
+    $$("[data-i18n-attr]").forEach(function (el) {
+      var pair = el.getAttribute("data-i18n-attr").split(":");
+      chromeAttrs[pair[0]] = { el: el, attr: pair[1], value: el.getAttribute(pair[1]) };
+    });
+    enGuestOptions = $$("#rsvpGuests option").map(function (o) { return o.textContent; });
+  }
+
+  function titleHtml(title, accentKey, join) {
+    var ui = D.ui || {};
+    if (ui[title] == null) return chromeEN[title] || "";
+    var t = esc(ui[title]);
+    var acc = ui[accentKey];
+    if (acc == null) return t;
+    return t + (join === "br" ? "<br />" : " ") + "<em>" + esc(acc) + "</em>";
+  }
+
+  function applyChrome(d) {
+    var ui = d.ui || {};
+    Object.keys(chromeEN).forEach(function (key) {
+      var el = $('[data-i18n="' + key + '"]');
+      if (!el) return;
+      if (ui[key] == null) { el.innerHTML = chromeEN[key]; return; }
+      // Section titles pair a title with an accent word rendered in <em>.
+      if (key === "countdownTitle") { el.innerHTML = titleHtml(key, "countdownTitleAccent", "br"); return; }
+      if (key === "eventsTitle") { el.innerHTML = titleHtml(key, "eventsTitleAccent", " "); return; }
+      if (key === "venueTitle") { el.innerHTML = titleHtml(key, "venueTitleAccent", " "); return; }
+      if (key === "rsvpTitle") { el.innerHTML = titleHtml(key, "rsvpTitleAccent", " "); return; }
+      if (key === "messageLabel") {
+        // Label carries an "(optional)" hint span.
+        el.innerHTML = esc(ui[key]) +
+          (ui.optional != null ? ' <span class="field__optional">' + esc(ui.optional) + "</span>" : "");
+        return;
+      }
+      el.innerHTML = esc(ui[key]);
+    });
+    Object.keys(chromeAttrs).forEach(function (key) {
+      var a = chromeAttrs[key];
+      a.el.setAttribute(a.attr, ui[key] != null ? ui[key] : a.value);
+    });
+  }
+
+  function applyGuestOptions(d) {
+    var sel = $("#rsvpGuests");
+    if (!sel) return;
+    var opts = d.ui && d.ui.guestOptions;
+    Array.prototype.forEach.call(sel.options, function (o, i) {
+      o.textContent = (opts && opts[i] != null) ? opts[i] : (enGuestOptions[i] || o.textContent);
+    });
+  }
+
+  /* ============ 2. Envelope intro ============
      A wax-sealed envelope over the page; tapping the seal cracks it,
      opens the flap and releases a few petals. The card lifts out, then
      is pulled toward the camera while the empty envelope sinks away.
      As the backdrop clears, the hero entrance runs (html.is-open gates
-     the .anim animations in styles.css). */
+     the .anim animations in styles.css). The language toggle floats
+     above the envelope, so the card is re-texted on every switch. */
+  var introApplyLanguage = null;
+
   (function initIntro() {
     var enabled = !(cfg.intro && cfg.intro.enabled === false);
     if (!enabled) {
@@ -40,9 +185,9 @@
     }
 
     var initials = esc(cfg.couple.initials || "");
-    var names = esc(cfg.couple.name1 + " & " + cfg.couple.name2);
-    var dateShort = esc(cfg.dateDisplay || "");
-    var hint = esc((cfg.intro && cfg.intro.hint) || "Tap the seal to open");
+    var names = esc(D.couple.name1 + " " + nameJoin() + " " + D.couple.name2);
+    var dateShort = esc(D.dateDisplay || "");
+    var hint = esc((D.intro && D.intro.hint) || "Tap the seal to open");
 
     document.body.classList.add("intro-active");
 
@@ -65,6 +210,17 @@
       "</div>" +
       '<p class="intro__hint">' + hint + "</p>";
     document.body.appendChild(intro);
+
+    // The toggle floats above the envelope — keep the card in step with
+    // the chosen language until the envelope is opened.
+    introApplyLanguage = function (d) {
+      var cardNames = intro.querySelector(".intro__card-names");
+      var cardDate = intro.querySelector(".intro__card-date");
+      var hintEl = intro.querySelector(".intro__hint");
+      if (cardNames) cardNames.textContent = d.couple.name1 + " " + nameJoin() + " " + d.couple.name2;
+      if (cardDate) cardDate.textContent = d.dateDisplay || "";
+      if (hintEl) hintEl.textContent = (d.intro && d.intro.hint) || "Tap the seal to open";
+    };
 
     var opened = false;
 
@@ -103,21 +259,28 @@
     });
   })();
 
-  /* ============ 1b. Self-drawing line art ============
+  /* ============ 3. Self-drawing line art ============
      Inline decorative SVGs reveal with a stroke-draw effect: each stroke
      starts fully dashed-out and transitions to solid (stroke-dashoffset
      L -> 0), staggered so the artwork appears to be drawn by hand.
      Triggers: hero pieces when the envelope opens, ornament/icon pieces
      when their section scrolls into view, the footer sprig near the page
-     end, and the RSVP check when a response is sent. */
+     end, and the RSVP check when a response is sent.
+     Re-runs safely after a language switch (new icons get registered,
+     already-drawn ones are skipped via WeakSet). */
   var DRAW_SELECTORS = [
     ".hero__garland svg", ".sprig svg", ".ornament svg", ".hero__scroll svg",
     ".event-card__icon svg", ".details-card__icon svg", ".rsvp__done svg",
   ].join(", ");
   var drawItems = [];
+  var drawnSvgs = typeof WeakSet !== "undefined" ? new WeakSet() : null;
 
   function initDrawOn() {
     $$(DRAW_SELECTORS).forEach(function (svg) {
+      if (drawnSvgs) {
+        if (drawnSvgs.has(svg)) return;
+        drawnSvgs.add(svg);
+      }
       var shapes = $$("path, line, circle, polyline, rect", svg);
       var iconLike = !!svg.closest(".event-card__icon, .details-card__icon, .hero__scroll, .rsvp__done");
       var dur = iconLike ? 0.7 : 1.15;
@@ -186,52 +349,59 @@
     });
   }
 
-  /* ============ 2. Theme + text hydration ============ */
+  /* ============ 4. Theme + text hydration ============ */
   if (cfg.theme) document.documentElement.setAttribute("data-theme", cfg.theme);
-
-  var slots = {
-    "data-initials": cfg.couple.initials,
-    "data-name1": cfg.couple.name1,
-    "data-name2": cfg.couple.name2,
-    "data-date-display": cfg.dateDisplay,
-    "data-city": cfg.city,
-    "data-blessing": cfg.blessing,
-    "data-welcome-eyebrow": cfg.welcome.eyebrow,
-    "data-parents1": cfg.welcome.parents1,
-    "data-parents2": cfg.welcome.parents2,
-    "data-invite-line": cfg.welcome.inviteLine,
-    "data-countdown-note": cfg.countdownNote,
-    "data-venue-name": cfg.venue.name,
-    "data-venue-address": (cfg.venue.address || ""),
-    "data-closing": cfg.closing,
-    "data-footer-names": cfg.couple.name1 + " & " + cfg.couple.name2,
-    "data-footer-date": formatDateShort() + " \u00B7 " + cfg.city.replace(", Bangladesh", "").replace(/,.*/, ""),
-    "data-hashtag": cfg.couple.hashtag,
-    "data-credit": cfg.credit,
-  };
-
-  Object.keys(slots).forEach(function (attr) {
-    var el = $("[" + attr + "]");
-    if (el) el.textContent = slots[attr];
-  });
-
-  // Document title & social meta follow the couple.
-  var title = cfg.couple.name1 + " & " + cfg.couple.name2 + " \u2014 Wedding Invitation";
-  document.title = title;
-  var ogTitle = $('meta[property="og:title"]');
-  if (ogTitle) ogTitle.setAttribute("content", title);
-  var twTitle = $('meta[name="twitter:title"]');
-  if (twTitle) twTitle.setAttribute("content", title);
-  if (cfg.ogImage) {
-    $$('meta[property="og:image"], meta[name="twitter:image"]').forEach(function (m) {
-      m.setAttribute("content", cfg.ogImage);
-    });
-  }
 
   function formatDateShort() {
     // "12 · 02 · 2027" from weddingDateTime (venue-local via manual parse).
     var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(cfg.weddingDateTime);
     return m ? m[3] + " \u00B7 " + m[2] + " \u00B7 " + m[1] : "";
+  }
+
+  function applySlots(d) {
+    var join = nameJoin();
+    var slots = {
+      "data-initials": d.couple.initials,
+      "data-name1": d.couple.name1,
+      "data-name2": d.couple.name2,
+      "data-amp": join,
+      "data-date-display": d.dateDisplay,
+      "data-city": d.city,
+      "data-blessing": d.blessing,
+      "data-welcome-eyebrow": d.welcome.eyebrow,
+      "data-parents1": d.welcome.parents1,
+      "data-parents2": d.welcome.parents2,
+      "data-invite-line": d.welcome.inviteLine,
+      "data-countdown-note": d.countdownNote,
+      "data-venue-name": d.venue.name,
+      "data-venue-address": (d.venue.address || ""),
+      "data-closing": d.closing,
+      "data-footer-names": d.couple.name1 + " " + join + " " + d.couple.name2,
+      "data-footer-date": locNum(formatDateShort()) + " \u00B7 " + String(d.city || "").split(",")[0],
+      "data-hashtag": d.couple.hashtag,
+      "data-credit": d.credit,
+    };
+
+    Object.keys(slots).forEach(function (attr) {
+      var el = $("[" + attr + "]");
+      if (el) el.textContent = slots[attr];
+    });
+  }
+
+  function applyMeta(d) {
+    var join = nameJoin();
+    var title = d.metaTitle ||
+      (d.couple.name1 + " " + join + " " + d.couple.name2 + " \u2014 Wedding Invitation");
+    document.title = title;
+    var ogTitle = $('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute("content", title);
+    var twTitle = $('meta[name="twitter:title"]');
+    if (twTitle) twTitle.setAttribute("content", title);
+    if (cfg.ogImage) {
+      $$('meta[property="og:image"], meta[name="twitter:image"]').forEach(function (m) {
+        m.setAttribute("content", cfg.ogImage);
+      });
+    }
   }
 
   /* Keep each name on a single line: shrink the script font until it fits
@@ -250,7 +420,6 @@
       if (el.scrollWidth > max) el.style.whiteSpace = "";
     });
   }
-  fitNames();
   window.addEventListener("resize", fitNames);
 
   /* Optional couple photo behind the arch content (config.heroPhoto). */
@@ -263,23 +432,28 @@
     el.style.setProperty("--tint", cfg.heroPhoto.tint != null ? cfg.heroPhoto.tint : 0.55);
     var arch = $(".hero__arch");
     if (arch) arch.classList.add("has-photo");
-    // Photo can change how much room the names have — re-fit.
-    fitNames();
   })();
 
-  /* ============ 3. Story timeline (+ gold fill) ============ */
+  function updateHeroPhotoAlt(d) {
+    var img = $("#heroPhoto img");
+    if (img && d.heroPhoto && d.heroPhoto.alt) img.alt = d.heroPhoto.alt;
+  }
+
+  /* ============ 5. Story timeline (+ gold fill) ============ */
   var storyList = $("#storyList");
-  if (storyList && cfg.story && cfg.story.chapters && cfg.story.chapters.length) {
+
+  function renderStory(d) {
+    if (!storyList || !d.story || !d.story.chapters || !d.story.chapters.length) return;
     var storyHead = {
       eyebrow: $(".story .eyebrow"),
       title: $(".story .section-title"),
     };
-    if (storyHead.eyebrow) storyHead.eyebrow.textContent = cfg.story.eyebrow;
+    if (storyHead.eyebrow) storyHead.eyebrow.textContent = d.story.eyebrow;
     if (storyHead.title) {
       storyHead.title.innerHTML =
-        esc(cfg.story.title || "Our") + " <em>" + esc(cfg.story.titleAccent || "Story") + "</em>";
+        esc(d.story.title || "Our") + " <em>" + esc(d.story.titleAccent || "Story") + "</em>";
     }
-    storyList.innerHTML = cfg.story.chapters.map(function (ch) {
+    storyList.innerHTML = d.story.chapters.map(function (ch) {
       return (
         '<article class="chapter reveal">' +
         '<span class="chapter__dot" aria-hidden="true"></span>' +
@@ -289,34 +463,52 @@
         "</article>"
       );
     }).join("");
+    ensureStoryFill();
   }
 
-  /* Gold thread that fills as the guest scrolls through the chapters. */
-  (function initStoryFill() {
+  /* Gold thread that fills as the guest scrolls through the chapters.
+     The thread element is re-mounted after each re-render. */
+  var storyFill = null, storyFillTl = null;
+
+  function ensureStoryFill() {
     var tl = $(".story__timeline");
     if (!tl) return;
-    var fill = document.createElement("span");
-    fill.className = "story__fill";
-    fill.setAttribute("aria-hidden", "true");
-    tl.appendChild(fill);
+    if (storyFill && storyFillTl === tl && storyFill.parentNode === tl) return;
+    storyFill = document.createElement("span");
+    storyFill.className = "story__fill";
+    storyFill.setAttribute("aria-hidden", "true");
+    tl.appendChild(storyFill);
+    storyFillTl = tl;
+    updateStoryFill();
+  }
 
+  (function initStoryFill() {
     var ticking = false;
     function update() {
       ticking = false;
-      var r = tl.getBoundingClientRect();
+      if (!storyFill || !storyFillTl) return;
+      var r = storyFillTl.getBoundingClientRect();
       if (r.bottom < 0 || r.top > window.innerHeight) return;
       var focus = window.innerHeight * 0.62;
       var p = Math.max(0, Math.min(1, (focus - r.top) / r.height));
-      fill.style.height = (p * 100).toFixed(1) + "%";
+      storyFill.style.height = (p * 100).toFixed(1) + "%";
     }
     window.addEventListener("scroll", function () {
       if (!ticking) { ticking = true; requestAnimationFrame(update); }
     }, { passive: true });
     window.addEventListener("resize", update, { passive: true });
-    update();
   })();
 
-  /* ============ 4. Event cards ============ */
+  function updateStoryFill() {
+    if (!storyFill || !storyFillTl) return;
+    var r = storyFillTl.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > window.innerHeight) return;
+    var focus = window.innerHeight * 0.62;
+    var p = Math.max(0, Math.min(1, (focus - r.top) / r.height));
+    storyFill.style.height = (p * 100).toFixed(1) + "%";
+  }
+
+  /* ============ 6. Event cards ============ */
   var ICONS = {
     date: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>',
     time: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 13.5"/></svg>',
@@ -343,9 +535,15 @@
     floral: EVENT_ICONS.floral,
   };
 
+  function uiStr(key, fallback) {
+    return (D.ui && D.ui[key] != null) ? D.ui[key] : fallback;
+  }
+
   var list = $("#eventList");
-  if (list && cfg.events && cfg.events.length) {
-    list.innerHTML = cfg.events.map(renderEvent).join("");
+
+  function renderEvents(d) {
+    if (!list || !d.events || !d.events.length) return;
+    list.innerHTML = d.events.map(renderEvent).join("");
   }
 
   function renderEvent(ev) {
@@ -362,44 +560,46 @@
       (ev.tagline ? '<p class="event-card__tagline">' + esc(ev.tagline) + "</p>" : "") +
       '<div class="event-card__divider" aria-hidden="true"></div>' +
       '<dl class="event-card__rows">' +
-      row(ICONS.date, "Date", ev.date) +
-      row(ICONS.time, "Time", ev.time) +
-      row(ICONS.pin, "Venue", ev.venue) +
-      (ev.address ? row('<span class="row__dot" aria-hidden="true"></span>', "Address", ev.address) : "") +
+      row(ICONS.date, uiStr("labelDate", "Date"), ev.date) +
+      row(ICONS.time, uiStr("labelTime", "Time"), ev.time) +
+      row(ICONS.pin, uiStr("labelVenue", "Venue"), ev.venue) +
+      (ev.address ? row('<span class="row__dot" aria-hidden="true"></span>', uiStr("labelAddress", "Address"), ev.address) : "") +
       "</dl>" +
       '<div class="event-card__actions">' +
-      '<a class="link-btn" href="' + mapUrl + '" target="_blank" rel="noopener">View on Map \u2197</a>' +
-      (calUrl ? '<a class="link-btn link-btn--calendar" href="' + calUrl + '" target="_blank" rel="noopener">Add to Calendar \u2197</a>' : "") +
+      '<a class="link-btn" href="' + mapUrl + '" target="_blank" rel="noopener">' + esc(uiStr("viewMap", "View on Map \u2197")) + "</a>" +
+      (calUrl ? '<a class="link-btn link-btn--calendar" href="' + calUrl + '" target="_blank" rel="noopener">' + esc(uiStr("addCalendar", "Add to Calendar \u2197")) + "</a>" : "") +
       "</div></article>"
     );
   }
 
   /* "Thu · 11 Feb" style ticket chip — explicit ev.chip wins, else derive
-     from calDate. Returns "" when neither is available. */
+     from calDate. Returns "" when neither is available. Localised with
+     the active language's day/month names and digits. */
   function chipLabel(ev) {
-    if (ev.chip) return ev.chip;
+    if (ev.chip) return locNum(ev.chip);
     var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ev.calDate || "");
     if (!m) return "";
-    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    var months = (D.ui && D.ui.chipMonths) || ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    var days = (D.ui && D.ui.chipDays) || ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     var d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12));
-    return days[d.getUTCDay()] + " \u00B7 " + (+m[3]) + " " + months[+m[2] - 1];
+    return locNum(days[d.getUTCDay()] + " \u00B7 " + (+m[3]) + " " + months[+m[2] - 1]);
   }
 
   function row(icon, label, value) {
-    return '<div class="row"><dt>' + icon + "<span>" + label + "</span></dt><dd>" + esc(value) + "</dd></div>";
+    return '<div class="row"><dt>' + icon + "<span>" + esc(label) + "</span></dt><dd>" + esc(value) + "</dd></div>";
   }
 
   function buildCalendarUrl(ev) {
     if (!ev.calDate || !ev.calStart || !ev.calEnd) return "";
+    var join = nameJoin();
     var start = ev.calDate.replace(/-/g, "") + "T" + ev.calStart.replace(":", "") + "00";
     var end = ev.calDate.replace(/-/g, "") + "T" + ev.calEnd.replace(":", "") + "00";
     var params = {
       action: "TEMPLATE",
-      text: cfg.couple.name1 + " & " + cfg.couple.name2 + " \u2014 " + ev.name,
+      text: D.couple.name1 + " " + join + " " + D.couple.name2 + " \u2014 " + ev.name,
       dates: start + "/" + end,
-      details: "We would be honoured by your presence. " + cfg.couple.hashtag,
+      details: uiStr("calDetails", "We would be honoured by your presence.") + " " + cfg.couple.hashtag,
       location: [ev.venue, ev.address].filter(Boolean).join(", "),
     };
     if (ev.calTz) params.ctz = ev.calTz;
@@ -407,161 +607,6 @@
       .map(function (k) { return k + "=" + encodeURIComponent(params[k]); })
       .join("&");
   }
-
-  /* ============ 5. Gallery + lightbox ============ */
-  var galleryGrid = $("#galleryGrid");
-  var photos = (cfg.gallery && cfg.gallery.photos) || [];
-
-  if (galleryGrid && photos.length) {
-    var gHead = { eyebrow: $(".gallery .eyebrow"), title: $(".gallery .section-title") };
-    if (gHead.eyebrow) gHead.eyebrow.textContent = cfg.gallery.eyebrow;
-    if (gHead.title) {
-      gHead.title.innerHTML =
-        esc(cfg.gallery.title || "Our") + " <em>" + esc(cfg.gallery.titleAccent || "Gallery") + "</em>";
-    }
-    // Square tiles alternate between flat and arched tops
-    // (unless a photo opts in/out with arched: true/false).
-    var sq = 0;
-    galleryGrid.innerHTML = photos.map(function (p, i) {
-      var arch = p.arched != null
-        ? !!p.arched
-        : (!p.wide && (sq++ % 2) === 1);
-      return (
-        '<button class="g-photo reveal' + (p.wide ? " g-photo--wide" : "") + (arch ? " g-photo--arch" : "") + '" type="button" ' +
-        'data-index="' + i + '" aria-label="View photo: ' + esc(p.alt || p.caption || "photo") + '">' +
-        '<img src="' + esc(p.src) + '" alt="' + esc(p.alt || "") + '" loading="lazy" decoding="async" />' +
-        (p.caption ? '<span class="g-photo__cap">' + esc(p.caption) + "</span>" : "") +
-        "</button>"
-      );
-    }).join("");
-  }
-
-  (function initLightbox() {
-    var lb = $("#lightbox");
-    if (!lb || !photos.length) return;
-
-    var img = $("#lbImg"), cap = $("#lbCaption"), count = $("#lbCount");
-    var current = 0;
-    var lastFocus = null;
-
-    function render() {
-      var p = photos[current] || {};
-      img.src = p.src || "";
-      img.alt = p.alt || "";
-      cap.textContent = p.caption || "";
-      count.textContent = (current + 1) + " / " + photos.length;
-      // restart the Ken Burns drift for the new photo
-      img.classList.remove("is-zoom");
-      void img.offsetWidth;
-      img.classList.add("is-zoom");
-    }
-
-    function open(i) {
-      current = i;
-      render();
-      lastFocus = document.activeElement;
-      lb.hidden = false;
-      document.body.style.overflow = "hidden";
-      // force a frame so the fade transition runs
-      void lb.offsetWidth;
-      lb.classList.add("is-open");
-      $("#lbClose").focus();
-    }
-
-    function close() {
-      lb.classList.remove("is-open");
-      document.body.style.overflow = "";
-      setTimeout(function () { lb.hidden = true; }, 300);
-      if (lastFocus && lastFocus.focus) lastFocus.focus();
-    }
-
-    function step(d) {
-      current = (current + d + photos.length) % photos.length;
-      render();
-    }
-
-    $$(".g-photo").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        open(parseInt(btn.getAttribute("data-index"), 10) || 0);
-      });
-    });
-
-    $("#lbClose").addEventListener("click", close);
-    $("#lbPrev").addEventListener("click", function () { step(-1); });
-    $("#lbNext").addEventListener("click", function () { step(1); });
-
-    lb.addEventListener("click", function (e) {
-      if (e.target === lb || e.target.classList.contains("lightbox__stage")) close();
-    });
-
-    document.addEventListener("keydown", function (e) {
-      if (lb.hidden) return;
-      if (e.key === "Escape") close();
-      else if (e.key === "ArrowLeft") step(-1);
-      else if (e.key === "ArrowRight") step(1);
-    });
-
-    // Touch swipe
-    var touchX = null;
-    lb.addEventListener("touchstart", function (e) {
-      touchX = e.changedTouches[0].clientX;
-    }, { passive: true });
-    lb.addEventListener("touchend", function (e) {
-      if (touchX === null) return;
-      var dx = e.changedTouches[0].clientX - touchX;
-      if (Math.abs(dx) > 48) step(dx > 0 ? -1 : 1);
-      touchX = null;
-    }, { passive: true });
-  })();
-
-  /* ============ 6. Map ============ */
-  var mapFrame = $("#venueMap");
-  if (mapFrame && cfg.venue.mapQuery) {
-    var zoom = cfg.venue.mapZoom || 15;
-    mapFrame.src =
-      "https://maps.google.com/maps?q=" + encodeURIComponent(cfg.venue.mapQuery) +
-      "&z=" + zoom + "&output=embed";
-  }
-  $$("[data-directions]").forEach(function (a) {
-    if (cfg.venue.mapQuery) {
-      a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(cfg.venue.mapQuery);
-    }
-  });
-
-  /* ============ 6b. Good-to-know cards (dress code, gifts…) ============ */
-  (function initDetails() {
-    var section = $("#details");
-    if (!section) return;
-    var d = cfg.details;
-    if (!d || !d.cards || !d.cards.length) return;
-
-    var eyebrow = $("[data-details-eyebrow]");
-    if (eyebrow && d.eyebrow) eyebrow.textContent = d.eyebrow;
-    var titleEl = $(".details .section-title");
-    if (titleEl) {
-      titleEl.innerHTML =
-        esc(d.title || "The") + " <em>" + esc(d.titleAccent || "Details") + "</em>";
-    }
-
-    $("#detailsCards").innerHTML = d.cards.map(function (c) {
-      var icon = DETAIL_ICONS[c.icon] || DETAIL_ICONS.floral;
-      return (
-        '<article class="details-card reveal">' +
-        '<span class="details-card__icon" aria-hidden="true">' + icon + "</span>" +
-        '<h3 class="details-card__title">' + esc(c.title) + "</h3>" +
-        (c.text ? '<p class="details-card__text">' + esc(c.text) + "</p>" : "") +
-        (c.swatches && c.swatches.length
-          ? '<div class="details-card__swatches" aria-hidden="true">' +
-            c.swatches.map(function (hex) {
-              return '<span class="swatch" style="--c:' + esc(hex) + '"></span>';
-            }).join("") + "</div>"
-          : "") +
-        "</article>"
-      );
-    }).join("");
-
-    section.hidden = false;
-  })();
 
   /* ============ 7. Countdown (tick pulse + today mode) ============ */
   var target = new Date(cfg.weddingDateTime).getTime();
@@ -588,7 +633,7 @@
     var note = $("#cdToday");
     if (grid) grid.style.display = "none";
     if (note) {
-      if (cfg.countdownToday) note.textContent = cfg.countdownToday;
+      if (D.countdownToday) note.textContent = D.countdownToday;
       note.hidden = false;
     }
     if (cdTimer) { clearInterval(cdTimer); cdTimer = null; }
@@ -601,15 +646,17 @@
       if (!todayShown) showToday();
       return;
     }
-    setNum(cd.d, pad(Math.floor(diff / 864e5)));
-    setNum(cd.h, pad(Math.floor(diff / 36e5) % 24));
-    setNum(cd.m, pad(Math.floor(diff / 6e4) % 60));
-    setNum(cd.s, pad(Math.floor(diff / 1e3) % 60));
+    setNum(cd.d, locNum(pad(Math.floor(diff / 864e5))));
+    setNum(cd.h, locNum(pad(Math.floor(diff / 36e5) % 24)));
+    setNum(cd.m, locNum(pad(Math.floor(diff / 6e4) % 60)));
+    setNum(cd.s, locNum(pad(Math.floor(diff / 1e3) % 60)));
   }
   tick();
   if (!todayShown) cdTimer = setInterval(tick, 1000);
 
   /* ============ 8. Background music ============ */
+  var musicApplyAria = null;
+
   (function initMusic() {
     var btn = $("#musicBtn");
     if (!btn || !cfg.music || !cfg.music.enabled || !cfg.music.src) return;
@@ -619,6 +666,13 @@
     audio.preload = "auto";
 
     var fading = null;
+
+    musicApplyAria = function () {
+      var playing = btn.classList.contains("is-playing");
+      btn.setAttribute("aria-label", playing
+        ? uiStr("musicPause", "Pause background music")
+        : uiStr("musicPlay", "Play background music"));
+    };
 
     function fadeTo(vol, done) {
       if (fading) clearInterval(fading);
@@ -641,14 +695,14 @@
       fadeTo(0.55);
       btn.classList.add("is-playing");
       btn.setAttribute("aria-pressed", "true");
-      btn.setAttribute("aria-label", "Pause background music");
+      musicApplyAria();
     }
 
     function pause() {
       fadeTo(0, function () { audio.pause(); });
       btn.classList.remove("is-playing");
       btn.setAttribute("aria-pressed", "false");
-      btn.setAttribute("aria-label", "Play background music");
+      musicApplyAria();
     }
 
     // Only reveal the control once we know the track loads.
@@ -709,6 +763,8 @@
     setTimeout(function () { layer.remove(); }, 1900);
   }
 
+  var rsvpApplyLanguage = null;
+
   (function initRsvp() {
     var section = $(".rsvp");
     var form = $("#rsvpForm");
@@ -719,25 +775,32 @@
       return;
     }
 
-    var noteEl = $("[data-rsvp-note]");
-    if (noteEl && cfg.rsvp.note) {
-      noteEl.textContent = String(cfg.rsvp.note).replace("{deadline}", cfg.rsvp.deadline || "");
-    }
     var successEl = $("[data-rsvp-success]");
-    if (successEl && cfg.rsvp.successNote) successEl.textContent = cfg.rsvp.successNote;
 
-    // Event checkboxes from the same config that renders the cards.
-    var eventsWrap = $("#rsvpEvents");
-    if (eventsWrap && cfg.events && cfg.events.length) {
-      eventsWrap.innerHTML = cfg.events.map(function (ev, i) {
-        return (
-          '<label class="choice__opt">' +
-          '<input type="checkbox" name="events" value="' + esc(ev.name) + '" ' + (i === 0 ? "" : "checked") + ' />' +
-          "<span>" + esc(ev.name) + "</span>" +
-          "</label>"
-        );
-      }).join("");
-    }
+    // Note, success message and per-event checkboxes — re-applied on
+    // every language switch (tick states are preserved by index).
+    rsvpApplyLanguage = function (d) {
+      var noteEl = $("[data-rsvp-note]");
+      if (noteEl && d.rsvp.note) {
+        noteEl.textContent = String(d.rsvp.note).replace("{deadline}", d.rsvp.deadline || "");
+      }
+      if (successEl && d.rsvp.successNote) successEl.textContent = d.rsvp.successNote;
+
+      var eventsWrap = $("#rsvpEvents");
+      if (eventsWrap && d.events && d.events.length) {
+        var prevChecked = $$('input[name="events"]', form).map(function (c) { return c.checked; });
+        eventsWrap.innerHTML = d.events.map(function (ev, i) {
+          var checked = prevChecked.length ? prevChecked[i] : (i !== 0);
+          return (
+            '<label class="choice__opt">' +
+            '<input type="checkbox" name="events" value="' + esc(ev.name) + '" ' + (checked ? "checked" : "") + " />" +
+            "<span>" + esc(ev.name) + "</span>" +
+            "</label>"
+          );
+        }).join("");
+      }
+    };
+    rsvpApplyLanguage(cfg);
 
     var guestsWrap = $("#rsvpGuestsWrap");
     var eventsWrapField = $("#rsvpEventsWrap");
@@ -753,8 +816,9 @@
     syncAttendance();
 
     function collect() {
+      var join = nameJoin();
       var data = {
-        couple: cfg.couple.name1 + " & " + cfg.couple.name2,
+        couple: D.couple.name1 + " " + join + " " + D.couple.name2,
         name: ($("#rsvpName") || {}).value || "",
         attending: (form.querySelector('input[name="attending"]:checked') || {}).value || "yes",
         guests: ($("#rsvpGuests") || {}).value || "",
@@ -764,18 +828,28 @@
       return data;
     }
 
+    function attendingLine(data) {
+      var wa = (D.ui && D.ui.wa) || null;
+      if (data.attending !== "yes") {
+        return wa && wa.no ? wa.no : "Attending: Regretfully, no";
+      }
+      if (wa && wa.yes) {
+        return wa.yes + " (" + locNum(data.guests) + " " + (wa.guestWord || "guests") + ")";
+      }
+      return "Attending: Joyfully, yes (" + data.guests + " guest" + (data.guests === "1" ? "" : "s") + ")";
+    }
+
     function whatsappUrl(data) {
+      var wa = (D.ui && D.ui.wa) || {};
       var lines = [
-        "RSVP \u2014 " + data.couple,
-        "Name: " + data.name,
-        data.attending === "yes"
-          ? "Attending: Joyfully, yes (" + data.guests + " guest" + (data.guests === "1" ? "" : "s") + ")"
-          : "Attending: Regretfully, no",
+        (wa.rsvp || "RSVP") + " \u2014 " + data.couple,
+        (wa.name || "Name") + ": " + data.name,
+        attendingLine(data),
       ];
       if (data.attending === "yes" && data.events.length) {
-        lines.push("Events: " + data.events.join(", "));
+        lines.push((wa.events || "Events") + ": " + data.events.join(", "));
       }
-      if (data.message.trim()) lines.push("Message: " + data.message.trim());
+      if (data.message.trim()) lines.push((wa.message || "Message") + ": " + data.message.trim());
       return "https://wa.me/" + cfg.rsvp.whatsapp.replace(/[^\d]/g, "") +
         "?text=" + encodeURIComponent(lines.join("\n"));
     }
@@ -823,9 +897,9 @@
           .catch(function () {
             if (cfg.rsvp.whatsapp) {
               window.open(whatsappUrl(data), "_blank", "noopener");
-              finish("We opened WhatsApp with your answers \u2014 just press send.");
+              finish(uiStr("whatsappOpened", "We opened WhatsApp with your answers \u2014 just press send."));
             } else {
-              finish("Something went wrong sending your RSVP \u2014 please try again.");
+              finish(uiStr("rsvpError", "Something went wrong sending your RSVP \u2014 please try again."));
             }
           });
         return;
@@ -833,7 +907,7 @@
 
       if (cfg.rsvp.whatsapp) {
         window.open(whatsappUrl(data), "_blank", "noopener");
-        finish("We opened WhatsApp with your answers \u2014 just press send.");
+        finish(uiStr("whatsappOpened", "We opened WhatsApp with your answers \u2014 just press send."));
         return;
       }
 
@@ -853,11 +927,15 @@
     toastTimer = setTimeout(function () { toast.classList.remove("is-visible"); }, 2600);
   }
 
+  function copiedMsg() { return uiStr("copied", "Link copied to clipboard"); }
+
   function share() {
+    var join = nameJoin();
     var data = {
       title: document.title,
-      text: "You\u2019re invited \u2014 " + cfg.couple.name1 + " & " + cfg.couple.name2 +
-        " \u00B7 " + cfg.dateDisplay + " \u00B7 " + cfg.city,
+      text: uiStr("invitedLine", "You\u2019re invited") + " \u2014 " +
+        D.couple.name1 + " " + join + " " + D.couple.name2 +
+        " \u00B7 " + D.dateDisplay + " \u00B7 " + D.city,
       url: location.origin === "null" || location.protocol === "file:"
         ? "https://your-invite-link.example"
         : location.href,
@@ -868,7 +946,7 @@
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(data.url).then(
-        function () { showToast("Link copied to clipboard"); },
+        function () { showToast(copiedMsg()); },
         function () { fallbackCopy(data.url); }
       );
       return;
@@ -886,7 +964,7 @@
     ta.select();
     try {
       document.execCommand("copy");
-      showToast("Link copied to clipboard");
+      showToast(copiedMsg());
     } catch (e) {
       showToast(text);
     }
@@ -911,11 +989,147 @@
     fab.classList.add("is-visible");
   }
 
-  /* ============ 11. Petals, parallax, reveals ============ */
+  /* ============ 11. Gallery + lightbox ============ */
+  var galleryGrid = $("#galleryGrid");
 
-  // Register every decorative SVG for the draw-on effect (all sections
-  // have rendered by now, so JS-injected icons are included).
-  initDrawOn();
+  function resolvePhotos(d) {
+    var src = (d.gallery && d.gallery.photos) || [];
+    var caps = (d.gallery && d.gallery.captions) || [];
+    var alts = (d.gallery && d.gallery.alts) || [];
+    return src.map(function (p, i) {
+      var q = {}, k;
+      for (k in p) q[k] = p[k];
+      if (caps[i] != null) q.caption = caps[i];
+      if (alts[i] != null) q.alt = alts[i];
+      return q;
+    });
+  }
+
+  var photos = resolvePhotos(D);
+
+  function renderGallery(d) {
+    if (!galleryGrid) return;
+    photos = resolvePhotos(d);
+    if (!photos.length) return;
+
+    var gHead = { eyebrow: $(".gallery .eyebrow"), title: $(".gallery .section-title") };
+    if (gHead.eyebrow && d.gallery.eyebrow) gHead.eyebrow.textContent = d.gallery.eyebrow;
+    if (gHead.title) {
+      gHead.title.innerHTML =
+        esc(d.gallery.title || "Our") + " <em>" + esc(d.gallery.titleAccent || "Gallery") + "</em>";
+    }
+    // Square tiles alternate between flat and arched tops
+    // (unless a photo opts in/out with arched: true/false).
+    var sq = 0;
+    galleryGrid.innerHTML = photos.map(function (p, i) {
+      var arch = p.arched != null
+        ? !!p.arched
+        : (!p.wide && (sq++ % 2) === 1);
+      return (
+        '<button class="g-photo reveal' + (p.wide ? " g-photo--wide" : "") + (arch ? " g-photo--arch" : "") + '" type="button" ' +
+        'data-index="' + i + '" aria-label="' + esc(uiStr("viewPhoto", "View photo: ") + (p.alt || p.caption || "photo")) + '">' +
+        '<img src="' + esc(p.src) + '" alt="' + esc(p.alt || "") + '" loading="lazy" decoding="async" />' +
+        (p.caption ? '<span class="g-photo__cap">' + esc(p.caption) + "</span>" : "") +
+        "</button>"
+      );
+    }).join("");
+  }
+
+  (function initLightbox() {
+    var lb = $("#lightbox");
+    if (!lb) return;
+
+    var img = $("#lbImg"), cap = $("#lbCaption"), count = $("#lbCount");
+    var current = 0;
+    var lastFocus = null;
+
+    function render() {
+      var p = photos[current] || {};
+      img.src = p.src || "";
+      img.alt = p.alt || "";
+      cap.textContent = p.caption || "";
+      count.textContent = locNum((current + 1) + " / " + photos.length);
+      // restart the Ken Burns drift for the new photo
+      img.classList.remove("is-zoom");
+      void img.offsetWidth;
+      img.classList.add("is-zoom");
+    }
+
+    function open(i) {
+      current = i;
+      render();
+      lastFocus = document.activeElement;
+      lb.hidden = false;
+      document.body.style.overflow = "hidden";
+      // force a frame so the fade transition runs
+      void lb.offsetWidth;
+      lb.classList.add("is-open");
+      $("#lbClose").focus();
+    }
+
+    function close() {
+      lb.classList.remove("is-open");
+      document.body.style.overflow = "";
+      setTimeout(function () { lb.hidden = true; }, 300);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    function step(d) {
+      current = (current + d + photos.length) % photos.length;
+      render();
+    }
+
+    // Delegated so tiles re-rendered by a language switch stay clickable.
+    if (galleryGrid) {
+      galleryGrid.addEventListener("click", function (e) {
+        var btn = e.target && e.target.closest ? e.target.closest(".g-photo") : null;
+        if (btn) open(parseInt(btn.getAttribute("data-index"), 10) || 0);
+      });
+    }
+
+    $("#lbClose").addEventListener("click", close);
+    $("#lbPrev").addEventListener("click", function () { step(-1); });
+    $("#lbNext").addEventListener("click", function () { step(1); });
+
+    lb.addEventListener("click", function (e) {
+      if (e.target === lb || e.target.classList.contains("lightbox__stage")) close();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (lb.hidden) return;
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") step(-1);
+      else if (e.key === "ArrowRight") step(1);
+    });
+
+    // Touch swipe
+    var touchX = null;
+    lb.addEventListener("touchstart", function (e) {
+      touchX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    lb.addEventListener("touchend", function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 48) step(dx > 0 ? -1 : 1);
+      touchX = null;
+    }, { passive: true });
+  })();
+
+  /* ============ 12. Map ============ */
+  var mapFrame = $("#venueMap");
+  if (mapFrame && cfg.venue.mapQuery) {
+    var zoom = cfg.venue.mapZoom || 15;
+    mapFrame.src =
+      "https://maps.google.com/maps?q=" + encodeURIComponent(cfg.venue.mapQuery) +
+      "&z=" + zoom + "&output=embed";
+  }
+  $$("[data-directions]").forEach(function (a) {
+    if (cfg.venue.mapQuery) {
+      a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(cfg.venue.mapQuery);
+    }
+  });
+
+  /* ============ 13. Petals, parallax, reveals ============ */
 
   // Drifting rose petals in the hero.
   (function initPetals() {
@@ -986,41 +1200,156 @@
     }, { passive: true });
   })();
 
-  // Staggered reveal-on-scroll.
-  (function initReveals() {
+  // Staggered reveal-on-scroll. Runs again after each language switch so
+  // freshly rendered cards are observed (ones already scrolled past are
+  // marked visible immediately instead of waiting for an intersection).
+  var revealIO = null;
+
+  function observeReveals() {
     var selectors = [
       ".welcome", ".countdown__panel", ".chapter", ".event-card",
       ".g-photo", ".details-card", ".venue__info", ".venue__frame", ".rsvp__panel",
     ];
-    if ("IntersectionObserver" in window) {
-      selectors.forEach(function (sel) {
-        $$(sel).forEach(function (el) { el.classList.add("reveal"); });
+    selectors.forEach(function (sel) {
+      $$(sel).forEach(function (el) { el.classList.add("reveal"); });
+    });
+    // Stagger siblings inside each group (chapters, cards, photos).
+    [".chapter", ".event-card", ".g-photo"].forEach(function (sel) {
+      $$(sel).forEach(function (el, i) {
+        el.style.transitionDelay = Math.min(i % 4, 3) * 90 + "ms";
       });
-      // Stagger siblings inside each group (chapters, cards, photos).
-      [".chapter", ".event-card", ".g-photo"].forEach(function (sel) {
-        $$(sel).forEach(function (el, i) {
-          el.style.transitionDelay = Math.min(i % 4, 3) * 90 + "ms";
-        });
-      });
-      var io = new IntersectionObserver(function (entries) {
+    });
+    if (!("IntersectionObserver" in window)) {
+      $$(".reveal").forEach(function (el) { el.classList.add("is-in"); });
+      drawAllIn(document);
+      return;
+    }
+    if (!revealIO) {
+      revealIO = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
           if (e.isIntersecting) {
             e.target.classList.add("is-in");
             drawAllIn(e.target); // reveal the line art inside this section
-            io.unobserve(e.target);
+            revealIO.unobserve(e.target);
           }
         });
       }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
-      $$(".reveal").forEach(function (el) { io.observe(el); });
-      // Footer sprig draws when the footer approaches.
-      var footer = $(".footer");
-      if (footer) {
-        io.observe(footer);
-        footer.classList.add("reveal");
-      }
-    } else {
-      $$(".reveal").forEach(function (el) { el.classList.add("is-in"); });
-      drawAllIn(document);
     }
+    $$(".reveal").forEach(function (el) {
+      if (el.__observed) return;
+      el.__observed = true;
+      if (el.getBoundingClientRect().bottom < 0) {
+        // Already scrolled past — show it without waiting for an event.
+        el.classList.add("is-in");
+        drawAllIn(el);
+        return;
+      }
+      revealIO.observe(el);
+    });
+    // Footer sprig draws when the footer approaches.
+    var footer = $(".footer");
+    if (footer && !footer.__observed) {
+      footer.__observed = true;
+      footer.classList.add("reveal");
+      revealIO.observe(footer);
+    }
+  }
+
+  /* ============ Language switching ============ */
+
+  function updateLangBtn() {
+    var btn = $("#langBtn");
+    if (!btn || btn.hidden) return;
+    var labels = (cfg.localization && cfg.localization.labels) || {};
+    var cur = labels[lang] || {};
+    var others = allLangs().filter(function (l) { return l !== lang; });
+    var next = others[0] || "en";
+    var labelEl = $("#langBtnLabel");
+    if (labelEl) {
+      labelEl.textContent = cur.short != null ? cur.short : (next === "bn" ? "\u09AC\u09BE\u0982\u09B2\u09BE" : String(next).toUpperCase());
+    }
+    btn.setAttribute("aria-label", cur.aria || "Switch language");
+  }
+
+  function applyLanguage(l, persist) {
+    lang = l;
+    D = dict(l);
+    document.documentElement.setAttribute("lang", l === "bn" ? "bn" : "en");
+    document.documentElement.setAttribute("data-lang", l);
+    if (introApplyLanguage) introApplyLanguage(D);
+    applyChrome(D);
+    applyGuestOptions(D);
+    applySlots(D);
+    applyMeta(D);
+    updateHeroPhotoAlt(D);
+    renderStory(D);
+    renderEvents(D);
+    renderGallery(D);
+    renderDetails(D);
+    if (rsvpApplyLanguage) rsvpApplyLanguage(D);
+    if (musicApplyAria) musicApplyAria();
+    if (todayShown) showToday(); // refresh the "today" blessing text
+    tick(); // repaint countdown digits (numerals change with language)
+    fitNames();
+    initDrawOn(); // register icons inside the freshly rendered sections
+    observeReveals();
+    updateLangBtn();
+    if (persist) {
+      try { localStorage.setItem(LANG_KEY, l); } catch (e) { /* ignore */ }
+    }
+  }
+
+  /* ============ 6b. Good-to-know cards (dress code, gifts…) ============ */
+  function renderDetails(d) {
+    var section = $("#details");
+    if (!section) return;
+    var det = d.details;
+    if (!det || !det.cards || !det.cards.length) return;
+
+    var eyebrow = $("[data-details-eyebrow]");
+    if (eyebrow && det.eyebrow) eyebrow.textContent = det.eyebrow;
+    var titleEl = $(".details .section-title");
+    if (titleEl) {
+      titleEl.innerHTML =
+        esc(det.title || "The") + " <em>" + esc(det.titleAccent || "Details") + "</em>";
+    }
+
+    $("#detailsCards").innerHTML = det.cards.map(function (c) {
+      var icon = DETAIL_ICONS[c.icon] || DETAIL_ICONS.floral;
+      return (
+        '<article class="details-card reveal">' +
+        '<span class="details-card__icon" aria-hidden="true">' + icon + "</span>" +
+        '<h3 class="details-card__title">' + esc(c.title) + "</h3>" +
+        (c.text ? '<p class="details-card__text">' + esc(c.text) + "</p>" : "") +
+        (c.swatches && c.swatches.length
+          ? '<div class="details-card__swatches" aria-hidden="true">' +
+            c.swatches.map(function (hex) {
+              return '<span class="swatch" style="--c:' + esc(hex) + '"></span>';
+            }).join("") + "</div>"
+          : "") +
+        "</article>"
+      );
+    }).join("");
+
+    section.hidden = false;
+  }
+
+  /* ============ Boot ============ */
+
+  snapshotChrome();
+  applyLanguage(lang, false);
+
+  (function initLangToggle() {
+    var btn = $("#langBtn");
+    if (!btn) return;
+    var loc = cfg.localization;
+    if (!loc || loc.enabled === false || !availableLangs().length) return;
+    btn.hidden = false;
+    btn.addEventListener("click", function () {
+      var next = allLangs().filter(function (l) { return l !== lang; })[0];
+      if (!next) return;
+      applyLanguage(next, true);
+    });
+    updateLangBtn();
   })();
 })();

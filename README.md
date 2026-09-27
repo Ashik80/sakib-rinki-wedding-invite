@@ -47,6 +47,10 @@ Signature additions:
 - **RSVP** — name, attendance, guest count, per-event checkboxes, message;
   delivered via WhatsApp (pre-typed) and/or a Formspree-style endpoint,
   celebrated with a petal burst
+- **Two languages (English ⇄ বাংলা)** — a floating toggle lets guests read the
+  invitation in either language: all content, headings, form labels, dates,
+  numerals (১২৩…) and even the WhatsApp RSVP message switch instantly; the
+  choice is remembered. See “Two-language setup” below.
 - **Background music** — floating player, gentle autoplay on the guest's
   first tap (browser policy prevents true silent autoplay), fade in/out,
   pauses when the tab is hidden
@@ -108,6 +112,36 @@ Fields that need small care:
   (mp3, ideally ≤2 MB). The current file is a soft generated piano loop
   (placeholder only).
 
+- `music.src` — replace `assets/music/theme.mp3` with the client's song
+  (mp3, ideally ≤2 MB). The current file is a soft generated piano loop
+  (placeholder only).
+
+### Two-language setup (English ⇄ বাংলা)
+
+`localization` in `config.js` controls the toggle:
+
+```js
+localization: {
+  enabled: true,        // false hides the floating button entirely
+  default: "en",        // language shown first: "en" | "bn"
+  labels: { … },        // what the button shows while each language is active
+},
+```
+
+`INVITE_TRANSLATIONS.bn` (bottom of the same file) holds the Bangla strings.
+It mirrors the config above — anything present overrides the English value
+when বাংলা is active, anything omitted keeps its English value (names, the
+Arabic blessing, map queries and calendar times usually stay untouched).
+Arrays merge element-wise, so a translated event carries only its display
+strings and still inherits `icon`, `calDate`, `mapQuery`… from its English
+twin. `ui` inside the block holds the fixed interface strings (headings,
+form labels, buttons); `digits: true` renders all numbers as Bengali
+numerals. To add a third language, add another key under
+`INVITE_TRANSLATIONS` and a matching `labels` entry.
+
+Guests can also be deep-linked to a language with `?lang=bn` (or `?lang=en`),
+and the last choice is remembered in `localStorage`.
+
 ### Themes (sold as a personalisation option)
 
 One word in `config.js` recolours the entire invitation:
@@ -141,5 +175,7 @@ drag the folder in. One URL per couple = the shareable link.
 
 Google Fonts loaded in `index.html`: Playfair Display (serif), Parisienne
 (script), Jost (sans), Amiri (Arabic — renders the Bismillah blessing as
-elegant calligraphy), Noto Serif Bengali (Bangla text support). Bangla
-renders correctly anywhere it appears (names, blessing, messages).
+elegant calligraphy), Noto Serif Bengali and Noto Sans Bengali (Bangla text
+support — in Bangla mode they take over as the display/body faces via the
+`html[data-lang="bn"]` rules at the top of `styles.css`). Bangla renders
+correctly anywhere it appears (names, blessing, messages).
