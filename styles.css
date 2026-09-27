@@ -1599,8 +1599,10 @@ select.field__input {
 
 /* ============================================================
    ENVELOPE INTRO — full-screen wax-sealed envelope (script.js)
-   Tap the seal → flap opens → card lifts → curtain fades and
-   the hero entrance begins (html.is-open).
+   Tap the seal → flap opens → petals drift out → card lifts, then
+   is pulled toward the camera while the empty envelope sinks away;
+   the backdrop pushes in gently and the hero entrance begins
+   (html.is-open).
    ============================================================ */
 body.intro-active { overflow: hidden; }
 
@@ -1616,7 +1618,8 @@ body.intro-active { overflow: hidden; }
   background:
     radial-gradient(120% 90% at 50% 0%, rgba(183, 110, 121, 0.16), transparent 55%),
     var(--wine-deep);
-  transition: opacity 0.6s ease;
+  transition: opacity 1s ease,
+              transform 1.5s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .intro::before {
@@ -1630,7 +1633,12 @@ body.intro-active { overflow: hidden; }
   mask-image: radial-gradient(80% 70% at 50% 50%, rgba(0,0,0,0.9), transparent);
 }
 
-.intro.is-done { opacity: 0; pointer-events: none; }
+/* Soft camera push-in while the backdrop clears */
+.intro.is-done {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
 
 .intro__envelope {
   position: relative;
@@ -1643,6 +1651,15 @@ body.intro-active { overflow: hidden; }
 
 .intro.is-lifting .intro__envelope {
   transform: translateY(-12px) scale(1.04);
+}
+
+/* The empty envelope, relieved of its card, sinks away and tumbles
+   with a gravity-like ease while the card flies on without it. */
+.intro.is-revealing .intro__envelope {
+  transform: translateY(118%) rotate(-7deg);
+  opacity: 0;
+  transition: transform 0.9s cubic-bezier(0.55, 0, 0.85, 0.36),
+              opacity 0.6s ease 0.3s;
 }
 
 /* Envelope body + side folds — sits above the card so the card is
@@ -1695,7 +1712,8 @@ body.intro-active { overflow: hidden; }
   border-radius: 8px;
   background: var(--blush);
   box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.3);
-  transition: transform 0.95s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition: transform 0.95s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.75s ease 0.1s;
 }
 
 .intro__card::before {
@@ -1709,6 +1727,15 @@ body.intro-active { overflow: hidden; }
 
 .intro.is-lifting .intro__card {
   transform: translateY(-52%) scale(1.05);
+}
+
+/* The card keeps rising, swelling toward the viewer and dissolving —
+   as if drawn out of the envelope and into the page itself. */
+.intro.is-revealing .intro__card {
+  transform: translateY(-140%) scale(1.7);
+  opacity: 0;
+  transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.85s ease 0.05s;
 }
 
 .intro__card-seal {
@@ -1856,6 +1883,38 @@ body.intro-active { overflow: hidden; }
   text-transform: uppercase;
   color: var(--rose-soft);
   animation: hint-pulse 2.4s ease-in-out infinite;
+  transition: opacity 0.4s ease;
+}
+
+.intro.is-opening .intro__hint { opacity: 0; animation: none; }
+
+/* Petals that flutter out of the opened envelope (spawned by script.js) */
+.intro__petals {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.intro__petal {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: var(--s);
+  height: calc(var(--s) * 1.25);
+  background: linear-gradient(135deg, var(--rose-soft), var(--rose));
+  border-radius: 62% 38% 55% 45% / 68% 62% 38% 32%;
+  opacity: 0;
+  animation: petal-drift var(--t) cubic-bezier(0.22, 0.61, 0.36, 1) var(--dl, 0s) forwards;
+}
+
+@keyframes petal-drift {
+  0%   { transform: translate(0, 6px) rotate(0deg) scale(0.5); opacity: 0; }
+  12%  { opacity: 0.95; }
+  55%  { transform: translate(calc(var(--dx) * 0.6), var(--dy)) rotate(calc(var(--dr) * 0.6)) scale(1); opacity: 0.95; }
+  100% { transform: translate(var(--dx), calc(var(--dy) * 0.3)) rotate(var(--dr)) scale(0.94); opacity: 0; }
 }
 
 @keyframes hint-pulse {

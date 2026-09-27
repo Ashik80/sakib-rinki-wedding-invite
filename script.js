@@ -27,9 +27,11 @@
   }
 
   /* ============ 1. Envelope intro ============
-     A wax-sealed envelope over the page; tapping the seal opens the
-     flap, lifts the card and fades away — then the hero entrance runs
-     (html.is-open gates the .anim animations in styles.css). */
+     A wax-sealed envelope over the page; tapping the seal cracks it,
+     opens the flap and releases a few petals. The card lifts out, then
+     is pulled toward the camera while the empty envelope sinks away.
+     As the backdrop clears, the hero entrance runs (html.is-open gates
+     the .anim animations in styles.css). */
   (function initIntro() {
     var enabled = !(cfg.intro && cfg.intro.enabled === false);
     if (!enabled) {
@@ -48,6 +50,7 @@
     intro.className = "intro";
     intro.innerHTML =
       '<div class="intro__envelope">' +
+      '<div class="intro__petals" aria-hidden="true"></div>' +
       '<div class="intro__card">' +
       '<span class="intro__card-seal"><span>' + initials + "</span></span>" +
       '<p class="intro__card-names">' + names + "</p>" +
@@ -64,18 +67,39 @@
     document.body.appendChild(intro);
 
     var opened = false;
+
+    // Petals that flutter up out of the opened envelope mouth
+    function spawnPetals() {
+      var layer = intro.querySelector(".intro__petals");
+      if (!layer) return;
+      for (var i = 0; i < 12; i++) {
+        var p = document.createElement("span");
+        p.className = "intro__petal";
+        p.style.setProperty("--x", (18 + Math.random() * 64).toFixed(0) + "%");
+        p.style.setProperty("--s", (9 + Math.random() * 10).toFixed(1) + "px");
+        p.style.setProperty("--dx", ((Math.random() - 0.5) * 220).toFixed(0) + "px");
+        p.style.setProperty("--dy", (-(120 + Math.random() * 150)).toFixed(0) + "px");
+        p.style.setProperty("--dr", ((Math.random() - 0.5) * 540).toFixed(0) + "deg");
+        p.style.setProperty("--t", (1.5 + Math.random() * 1.1).toFixed(2) + "s");
+        p.style.setProperty("--dl", (Math.random() * 0.45).toFixed(2) + "s");
+        layer.appendChild(p);
+      }
+    }
+
     intro.querySelector(".intro__seal").addEventListener("click", function () {
       if (opened) return;
       opened = true;
       intro.classList.add("is-opening");
+      setTimeout(spawnPetals, 320);
       setTimeout(function () { intro.classList.add("is-lifting"); }, 680);
+      setTimeout(function () { intro.classList.add("is-revealing"); }, 1500);
       setTimeout(function () {
         intro.classList.add("is-done");
         document.documentElement.classList.add("is-open");
         document.body.classList.remove("intro-active");
-        drawAllIn($(".hero")); // line art draws itself as the curtain clears
-      }, 1420);
-      setTimeout(function () { intro.remove(); }, 2150);
+        drawAllIn($(".hero")); // line art draws itself as the veil clears
+      }, 1850);
+      setTimeout(function () { intro.remove(); }, 3100);
     });
   })();
 
