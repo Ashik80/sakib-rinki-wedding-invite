@@ -30,7 +30,7 @@ const INVITE_CONFIG = {
   /* ---------- Social share preview ---------- */
   // 1200×630 image shown when the link is shared on WhatsApp/Facebook.
   // Replace assets/og-cover.png with a branded photo/monogram per client.
-  ogImage: "assets/og-cover.png",
+  ogImage: "https://sakib-rinki-spondora.netlify.app/assets/og-cover.png",
 
   /* ---------- Envelope intro ---------- */
   // A wax-sealed envelope the guest taps to open — the page then reveals
