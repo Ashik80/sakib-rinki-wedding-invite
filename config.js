@@ -251,7 +251,7 @@ const INVITE_CONFIG = {
 
   /* ---------- Closing ---------- */
   closing: "With love and prayers, we await your presence",
-  credit: "Crafted with \u2665 \u2014 Your Studio Name",
+  credit: "Crafted with \u2665 \u2014 Spondora Invites",
 };
 
 /* ============================================================
@@ -406,7 +406,7 @@ const INVITE_TRANSLATIONS = {
     },
 
     closing: "ভালোবাসা ও দোয়াসহ আপনার আগমনের প্রতীক্ষায়",
-    credit: "ভালোবাসা দিয়ে নির্মিত \u2665 \u2014 Your Studio Name",
+    credit: "ভালোবাসা দিয়ে নির্মিত \u2665 \u2014 Spondora Invites",
 
     /* Fixed interface strings — headings, buttons, form labels… */
     ui: {
