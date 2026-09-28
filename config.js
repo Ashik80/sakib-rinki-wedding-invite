@@ -71,8 +71,8 @@ const INVITE_CONFIG = {
   /* ---------- Families / welcome ---------- */
   welcome: {
     eyebrow: "Together with their families",
-    parents1: "Son of Mr. Md. Omar Faruk & Mrs. Beauty Akhter",
-    parents2: "Daughter of Mr. Habibur Rahman & Mrs. Lily Akter",
+    parents1: "Son of Md. Omar Faruk & Mrs. Beauty Akhter",
+    parents2: "Daughter of Habibur Rahman & Mrs. Lily Akter",
     inviteLine:
       "invite you to share in their joy as two hearts become one, bound by love, faith and forever.",
   },
@@ -258,8 +258,8 @@ const INVITE_TRANSLATIONS = {
 
     welcome: {
       eyebrow: "দুই পরিবারের সম্মতিক্রমে",
-      parents1: "মি. মোঃ ওমর ফারুক ও মিসেস বিউটি আখতারের পুত্র",
-      parents2: "মি. হাবিবুর রহমান ও মিসেস লিলি আক্তারের কন্যা",
+      parents1: "মোঃ ওমর ফারুক ও মিসেস বিউটি আখতারের পুত্র",
+      parents2: "হাবিবুর রহমান ও মিসেস লিলি আক্তারের কন্যা",
       inviteLine:
         "আপনাদের আনন্দে ভাগ বসানোর জন্য আমন্ত্রণ জানাচ্ছি — যেখানে ভালোবাসা, বিশ্বাস আর চিরকালের বন্ধনে দুটি হৃদয় এক হবে।",
     },
