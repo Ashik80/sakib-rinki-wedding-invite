@@ -20,7 +20,7 @@ const INVITE_CONFIG = {
      i.e. what the button shows while that language is active.          */
   localization: {
     enabled: true,
-    default: "en",              // "en" | "bn"
+    default: "bn",              // "en" | "bn"
     labels: {
       en: { short: "বাংলা", aria: "Switch the invitation to Bangla" },
       bn: { short: "English", aria: "Switch the invitation to English" },
