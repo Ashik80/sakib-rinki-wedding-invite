@@ -51,17 +51,17 @@ const INVITE_CONFIG = {
 
   /* ---------- Couple ---------- */
   couple: {
-    name1: "Sumaiya Karim",
-    name2: "Zayan Ahmed",
-    initials: "S&Z",            // shown in the monogram seal
-    hashtag: "#SumaiyaAndZayan",
+    name1: "Md. Sakibur Rahman",
+    name2: "Mst. Rinki Akter",
+    initials: "S&R",            // shown in the monogram seal
+    hashtag: "#SakiburAndRinki",
   },
 
   /* ---------- Ceremony / occasion ---------- */
   // Wedding datetime — local time. Countdown, calendar links and the
   // displayed date all derive from this one value.
-  weddingDateTime: "2027-02-12T18:00:00+06:00",
-  dateDisplay: "Friday, 12 February 2027",
+  weddingDateTime: "2026-10-17T13:30:00+06:00",
+  dateDisplay: "Saturday, 17 October 2026",
   city: "Dhaka, Bangladesh",
 
   /* ---------- Opening blessing ---------- */
@@ -71,8 +71,8 @@ const INVITE_CONFIG = {
   /* ---------- Families / welcome ---------- */
   welcome: {
     eyebrow: "Together with their families",
-    parents1: "Daughter of Mr. Farhan Karim & Mrs. Dilruba Karim",
-    parents2: "Son of Mr. Mahbub Ahmed & Mrs. Ruksana Ahmed",
+    parents1: "Son of Mr. Md. Omar Faruk & Mrs. Beauty Akhter",
+    parents2: "Daughter of Mr. Habibur Rahman & Mrs. Lily Akter",
     inviteLine:
       "invite you to share in their joy as two hearts become one, bound by love, faith and forever.",
   },
@@ -92,7 +92,7 @@ const INVITE_CONFIG = {
       {
         label: "March 2021",
         title: "A Chance Meeting",
-        text: "A family dinner, a crowded room, and one conversation that refused to end. Sumaiya says Zayan talked about books for an hour; Zayan says he would have talked forever.",
+        text: "A family dinner, a crowded room, and one conversation that refused to end. Rinki says Sakibur talked about books for an hour; Sakibur says he would have talked forever.",
       },
       {
         label: "December 2022",
@@ -102,10 +102,10 @@ const INVITE_CONFIG = {
       {
         label: "June 2025",
         title: "She Said Yes",
-        text: "Under a sky full of fireworks on her birthday, Zayan asked the question he had been practising for a year. Sumaiya said yes before he finished the sentence.",
+        text: "Under a sky full of fireworks on her birthday, Sakibur asked the question he had been practising for a year. Rinki said yes before he finished the sentence.",
       },
       {
-        label: "February 2027",
+        label: "October 2026",
         title: "Forever Begins",
         text: "And now we invite you — the people who loved us first — to witness the beginning of our greatest chapter.",
       },
@@ -119,48 +119,18 @@ const INVITE_CONFIG = {
   // start/end (HH:MM, 24h, venue local time) and a timezone.
   events: [
     {
-      tag: "Pre-Wedding",
-      name: "Mehendi Night",
-      icon: "mehendi",            // mehendi | rings | crescent | floral
-      tagline: "an evening of henna, songs & laughter",
-      date: "Thursday, 11 February 2027",
-      time: "6:30 PM onwards",
-      venue: "Karim Residence, The Garden Terrace",
-      address: "House 12, Road 55, Gulshan 2, Dhaka 1212",
-      mapQuery: "Gulshan 2, Dhaka",
-      calDate: "2027-02-11",
-      calStart: "18:30",
-      calEnd: "22:30",
-      calTz: "Asia/Dhaka",
-    },
-    {
       tag: "Wedding Day",
-      name: "Akd Ceremony",
-      icon: "rings",
-      tagline: "the blessed union, followed by dinner",
-      date: "Friday, 12 February 2027",
-      time: "6:00 PM onwards",
-      venue: "Crystal Hall, Radisson Blu Dhaka Water Garden",
-      address: "Airport Road, Dhaka 1229",
-      mapQuery: "Radisson Blu Dhaka Water Garden",
-      calDate: "2027-02-12",
-      calStart: "18:00",
-      calEnd: "23:00",
-      calTz: "Asia/Dhaka",
-    },
-    {
-      tag: "Celebration",
-      name: "Walima Reception",
-      icon: "crescent",
-      tagline: "dinner, blessings & celebrations",
-      date: "Saturday, 13 February 2027",
-      time: "7:00 PM onwards",
-      venue: "The Grand Ballroom, InterContinental Dhaka",
-      address: "1 Minto Road, Ramna, Dhaka 1000",
-      mapQuery: "InterContinental Dhaka",
-      calDate: "2027-02-13",
-      calStart: "19:00",
-      calEnd: "23:00",
+      name: "Wedding Reception",
+      icon: "rings",              // mehendi | rings | crescent | floral
+      tagline: "lunch, blessings & celebrations",
+      date: "Saturday, 17 October 2026",
+      time: "1:30 PM onwards",
+      venue: "Master Convention Hall",
+      address: "Savar, Dhaka (Near Savar Model Police Station)",
+      mapQuery: "Savar Model Police Station, Savar, Dhaka",
+      calDate: "2026-10-17",
+      calStart: "13:30",
+      calEnd: "17:30",
       calTz: "Asia/Dhaka",
     },
   ],
@@ -191,10 +161,10 @@ const INVITE_CONFIG = {
   /* ---------- Venue / map ---------- */
   // Shown in the map section (usually your main event).
   venue: {
-    name: "Crystal Hall, Radisson Blu Dhaka Water Garden",
-    address: "Airport Road, Dhaka 1229",
-    mapQuery: "Radisson Blu Dhaka Water Garden",
-    mapZoom: 15,
+    name: "Master Convention Hall",
+    address: "Savar, Dhaka (Near Savar Model Police Station)",
+    mapQuery: "Savar Model Police Station, Savar, Dhaka",
+    mapZoom: 16,
   },
 
   /* ---------- Photo gallery ---------- */
@@ -205,7 +175,7 @@ const INVITE_CONFIG = {
     title: "Our",
     titleAccent: "Gallery",
     photos: [
-      { src: "assets/photos/photo-1.svg", alt: "Sumaiya and Zayan monogram", caption: "Two rings, one promise", wide: false },
+      { src: "assets/photos/photo-1.svg", alt: "Sakibur and Rinki monogram", caption: "Two rings, one promise", wide: false },
       { src: "assets/photos/photo-2.svg", alt: "Save the date floral artwork", caption: "Save the date", wide: true },
       { src: "assets/photos/photo-3.svg", alt: "Heart with roses artwork", caption: "Every heartbeat, his name", wide: false },
       { src: "assets/photos/photo-4.svg", alt: "Crescent moon artwork", caption: "Under the same moon", wide: false },
@@ -241,7 +211,7 @@ const INVITE_CONFIG = {
   // the WhatsApp button.
   rsvp: {
     enabled: true,
-    deadline: "25 January 2027",
+    deadline: "10 October 2026",
     note: "Kindly respond by {deadline}. We can't wait to celebrate with you!",
     whatsapp: "8801712345678",
     endpoint: "",
@@ -271,25 +241,25 @@ const INVITE_CONFIG = {
 
 const INVITE_TRANSLATIONS = {
   bn: {
-    metaTitle: "সুমাইয়া ও জায়ান — বিবাহ নিমন্ত্রণ",
+    metaTitle: "সাকিবুর ও রিংকি — বিবাহ নিমন্ত্রণ",
 
     /* Names render in Bangla too (hero, footer, title, RSVP message).
        The initials, hashtag and the Arabic blessing stay as-is in
        both languages. */
     couple: {
-      name1: "সুমাইয়া করিম",
-      name2: "জায়ান আহমেদ",
+      name1: "মোঃ সাকিবুর রহমান",
+      name2: "মোছাঃ রিংকি আক্তার",
     },
 
     intro: { hint: "খুলতে সিলে চাপুন" },
 
-    dateDisplay: "শুক্রবার, ১২ ফেব্রুয়ারি ২০২৭",
+    dateDisplay: "শনিবার, ১৭ অক্টোবর ২০২৬",
     city: "ঢাকা, বাংলাদেশ",
 
     welcome: {
       eyebrow: "দুই পরিবারের সম্মতিক্রমে",
-      parents1: "মি. ফারহান করিম ও মিসেস দিলরুবা করিমের কন্যা",
-      parents2: "মি. মাহবুব আহমেদ ও মিসেস রুকসানা আহমেদের পুত্র",
+      parents1: "মি. মোঃ ওমর ফারুক ও মিসেস বিউটি আখতারের পুত্র",
+      parents2: "মি. হাবিবুর রহমান ও মিসেস লিলি আক্তারের কন্যা",
       inviteLine:
         "আপনাদের আনন্দে ভাগ বসানোর জন্য আমন্ত্রণ জানাচ্ছি — যেখানে ভালোবাসা, বিশ্বাস আর চিরকালের বন্ধনে দুটি হৃদয় এক হবে।",
     },
@@ -305,7 +275,7 @@ const INVITE_TRANSLATIONS = {
         {
           label: "মার্চ ২০২১",
           title: "হঠাৎ দেখা",
-          text: "একটি পারিবারিক ডিনার, ভরা ঘর, আর শেষ হতেই চাইছিল না যে কথা। সুমাইয়ার মতে জায়ান ঘণ্টার পর ঘণ্টা বই নিয়ে কথা বলেছে; জায়ানের ভাষায়, চিরকাল কথা বলতেও সে রাজি ছিল।",
+          text: "একটি পারিবারিক ডিনার, ভরা ঘর, আর শেষ হতেই চাইছিল না যে কথা। রিংকির মতে সাকিবুর ঘণ্টার পর ঘণ্টা বই নিয়ে কথা বলেছে; সাকিবুরের ভাষায়, চিরকাল কথা বলতেও সে রাজি ছিল।",
         },
         {
           label: "ডিসেম্বর ২০২২",
@@ -314,11 +284,11 @@ const INVITE_TRANSLATIONS = {
         },
         {
           label: "জুন ২০২৫",
-          title: "সুমাইয়ার সম্মতি",
-          text: "তার জন্মদিনে আতশবাজিভরা আকাশের নিচে জায়ান সেই প্রশ্ন করল, যার উত্তর সে এক বছর ধরে মুখস্থ করছিল। বাক্য শেষ হওয়ার আগেই সুমাইয়া বলে ফেলল — হ্যাঁ।",
+          title: "রিংকির সম্মতি",
+          text: "তার জন্মদিনে আতশবাজিভরা আকাশের নিচে সাকিবুর সেই প্রশ্ন করল, যার উত্তর সে এক বছর ধরে মুখস্থ করছিল। বাক্য শেষ হওয়ার আগেই রিংকি বলে ফেলল — হ্যাঁ।",
         },
         {
-          label: "ফেব্রুয়ারি ২০২৭",
+          label: "অক্টোবর ২০২৬",
           title: "চিরকালের শুরু",
           text: "আর এখন আমরা আমন্ত্রণ জানাচ্ছি আপনাদের — যাঁরা আমাদের সবার আগে ভালোবেসেছেন — আমাদের জীবনের শ্রেষ্ঠ অধ্যায়ের সূচনা দেখতে।",
         },
@@ -327,31 +297,13 @@ const INVITE_TRANSLATIONS = {
 
     events: [
       {
-        tag: "বিবাহপূর্ব",
-        name: "মেহেদি রাত",
-        tagline: "মেহেদি, গান আর হাসির এক সন্ধ্যা",
-        date: "বৃহস্পতিবার, ১১ ফেব্রুয়ারি ২০২৭",
-        time: "সন্ধ্যা ৬:৩০ থেকে",
-        venue: "করিম রেসিডেন্স, দ্য গার্ডেন টেরেস",
-        address: "বাড়ি ১২, রোড ৫৫, গুলশান ২, ঢাকা ১২১২",
-      },
-      {
         tag: "বিবাহ দিবস",
-        name: "আকদ অনুষ্ঠান",
-        tagline: "বরকতময় আকদ, এরপর ডিনার",
-        date: "শুক্রবার, ১২ ফেব্রুয়ারি ২০২৭",
-        time: "সন্ধ্যা ৬:০০ থেকে",
-        venue: "ক্রিস্টাল হল, রেডিসন ব্লু ঢাকা ওয়াটার গার্ডেন",
-        address: "এয়ারপোর্ট রোড, ঢাকা ১২২৯",
-      },
-      {
-        tag: "ভোজসভা",
-        name: "ওয়ালিমা রিসেপশন",
-        tagline: "ডিনার, দোয়া আর আনন্দের আয়োজন",
-        date: "শনিবার, ১৩ ফেব্রুয়ারি ২০২৭",
-        time: "রাত ৭:০০ থেকে",
-        venue: "দ্য গ্র্যান্ড বলরুম, ইন্টারকন্টিনেন্টাল ঢাকা",
-        address: "১ মিন্টো রোড, রমনা, ঢাকা ১০০০",
+        name: "বিবাহ সংবর্ধনা",
+        tagline: "দুপুরের খাবার, দোয়া আর আনন্দের আয়োজন",
+        date: "শনিবার, ১৭ অক্টোবর ২০২৬",
+        time: "দুপুর ১:৩০ থেকে",
+        venue: "মাস্টার কনভেনশন হল",
+        address: "সাভার, ঢাকা (সাভার মডেল থানার কাছে)",
       },
     ],
 
@@ -372,8 +324,8 @@ const INVITE_TRANSLATIONS = {
     },
 
     venue: {
-      name: "ক্রিস্টাল হল, রেডিসন ব্লু ঢাকা ওয়াটার গার্ডেন",
-      address: "এয়ারপোর্ট রোড, ঢাকা ১২২৯",
+      name: "মাস্টার কনভেনশন হল",
+      address: "সাভার, ঢাকা (সাভার মডেল থানার কাছে)",
     },
 
     gallery: {
@@ -389,7 +341,7 @@ const INVITE_TRANSLATIONS = {
         "যেখানে ভালোবাসা ফোটে",
       ],
       alts: [
-        "সুমাইয়া ও জায়ানের মনোগ্রাম",
+        "সাকিবুর ও রিংকির মনোগ্রাম",
         "সেভ দ্য ডেট ফ্লোরাল আর্ট",
         "গোলাপসহ হৃদয়ের আর্টওয়ার্ক",
         "বাঁকা চাঁদের আর্টওয়ার্ক",
@@ -399,7 +351,7 @@ const INVITE_TRANSLATIONS = {
     },
 
     rsvp: {
-      deadline: "২৫ জানুয়ারি ২০২৭",
+      deadline: "১০ অক্টোবর ২০২৬",
       note: "অনুগ্রহ করে {deadline}-এর মধ্যে উত্তর জানান। আপনাদের সাথে উদযাপন করতে আমরা অপেক্ষায় থাকব!",
       successNote:
         "জাযাকাল্লাহু খাইরান! আপনার উত্তর জানা হয়েছে — আবার দেখা হবে ইনশাআল্লাহ।",
@@ -422,8 +374,8 @@ const INVITE_TRANSLATIONS = {
       cdMinutes: "মিনিট",
       cdSeconds: "সেকেন্ড",
       eventsEyebrow: "কখন ও কোথায়",
-      eventsTitle: "আনন্দের",
-      eventsTitleAccent: "তিন দিন",
+      eventsTitle: "বিবাহ",
+      eventsTitleAccent: "সংবর্ধনা",
       labelDate: "তারিখ",
       labelTime: "সময়",
       labelVenue: "স্থান",

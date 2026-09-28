@@ -1467,7 +1467,7 @@ html[data-lang="bn"] .intro__hint {
   text-transform: none;
 }
 
-/* The S&Z monogram (hero seal, envelope seals) is Latin initials — keep
+/* The S&R monogram (hero seal, envelope seals) is Latin initials — keep
    the Playfair look identical in both languages. Bengali stays as the
    fallback in case a client uses Bengali initials. */
 html[data-lang="bn"] .seal__initials,
