@@ -365,7 +365,7 @@ const INVITE_TRANSLATIONS = {
     /* Fixed interface strings — headings, buttons, form labels… */
     ui: {
       nameJoin: "ও",
-      heroEyebrow: "শুভ বিবাহ অনুষ্ঠান",
+      heroEyebrow: "শুভ বিবাহ সংবর্ধনা",
       scroll: "স্ক্রল",
       saveEyebrow: "তারিখটি রাখুন",
       countdownTitle: "গণনা চলছে",
