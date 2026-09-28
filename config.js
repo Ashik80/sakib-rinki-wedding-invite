@@ -127,7 +127,8 @@ const INVITE_CONFIG = {
       time: "1:30 PM onwards",
       venue: "Master Convention Hall",
       address: "Savar, Dhaka (Near Savar Model Police Station)",
-      mapQuery: "Savar Model Police Station, Savar, Dhaka",
+      mapQuery: "R6QW+PM2 Master Community Center, Ceramics Rd, Savar",
+      mapUrl: "https://maps.app.goo.gl/7zKpXTjnGjEWcWPk6?g_st=aw",
       calDate: "2026-10-17",
       calStart: "13:30",
       calEnd: "17:30",
@@ -163,7 +164,8 @@ const INVITE_CONFIG = {
   venue: {
     name: "Master Convention Hall",
     address: "Savar, Dhaka (Near Savar Model Police Station)",
-    mapQuery: "Savar Model Police Station, Savar, Dhaka",
+    mapQuery: "R6QW+PM2 Master Community Center, Ceramics Rd, Savar",
+    mapUrl: "https://maps.app.goo.gl/7zKpXTjnGjEWcWPk6?g_st=aw",
     mapZoom: 16,
   },
 
@@ -258,7 +260,7 @@ const INVITE_TRANSLATIONS = {
 
     welcome: {
       eyebrow: "দুই পরিবারের সম্মতিক্রমে",
-      parents1: "মোঃ ওমর ফারুক ও মিসেস বিউটি আখতারের পুত্র",
+      parents1: "মোঃ ওমর ফারুক ও মিসেস বিউটি আক্তারের পুত্র",
       parents2: "হাবিবুর রহমান ও মিসেস লিলি আক্তারের কন্যা",
       inviteLine:
         "আপনাদের আনন্দে ভাগ বসানোর জন্য আমন্ত্রণ জানাচ্ছি — যেখানে ভালোবাসা, বিশ্বাস আর চিরকালের বন্ধনে দুটি হৃদয় এক হবে।",

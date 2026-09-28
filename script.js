@@ -547,7 +547,7 @@
   }
 
   function renderEvent(ev) {
-    var mapUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(ev.mapQuery || ev.venue || "");
+    var mapUrl = ev.mapUrl || ("https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(ev.mapQuery || ev.venue || ""));
     var calUrl = buildCalendarUrl(ev);
     var icon = EVENT_ICONS[ev.icon] || EVENT_ICONS.floral;
     var chip = chipLabel(ev);
@@ -1124,8 +1124,8 @@
       "&z=" + zoom + "&output=embed";
   }
   $$("[data-directions]").forEach(function (a) {
-    if (cfg.venue.mapQuery) {
-      a.href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(cfg.venue.mapQuery);
+    if (cfg.venue.mapUrl || cfg.venue.mapQuery) {
+      a.href = cfg.venue.mapUrl || ("https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(cfg.venue.mapQuery));
     }
   });
 
