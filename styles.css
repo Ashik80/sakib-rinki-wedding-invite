@@ -1423,11 +1423,13 @@ select.field__input {
 
 /* Bangla mode — the Noto Bengali faces take over from the Latin display
    fonts, and the wide tracking used for Latin small-caps is relaxed
-   (letter-spacing breaks Bengali conjuncts apart). */
+   (letter-spacing breaks Bengali conjuncts apart). The couple's names
+   (and the countdown closing line / gallery captions) use Atma, a bouncy
+   handwritten Bengali face, in place of formal Noto Serif. */
 html[data-lang="bn"] {
   --serif: "Noto Serif Bengali", "Playfair Display", Georgia, serif;
   --sans: "Noto Sans Bengali", "Jost", system-ui, sans-serif;
-  --script: "Noto Serif Bengali", "Parisienne", cursive;
+  --script: "Atma", "Noto Serif Bengali", cursive;
 }
 
 html[data-lang="bn"] body { line-height: 1.85; }
