@@ -184,22 +184,6 @@
       </div>
     </section>
 
-    <!-- ============ OUR STORY ============ -->
-    <section class="story" id="story">
-      <p class="eyebrow eyebrow--accent">How It Began</p>
-      <h2 class="section-title">Our <em>Story</em></h2>
-
-      <div class="story__timeline" id="storyList">
-        <!-- Timeline chapters rendered from config.js -->
-        <article class="chapter">
-          <span class="chapter__dot" aria-hidden="true"></span>
-          <p class="chapter__label">March 2021</p>
-          <h3 class="chapter__title">A Chance Meeting</h3>
-          <p class="chapter__text">A family dinner, a crowded room, and one conversation that refused to end.</p>
-        </article>
-      </div>
-    </section>
-
     <!-- ============ EVENTS ============ -->
     <section class="events" id="events">
       <p class="eyebrow eyebrow--accent" data-i18n="eventsEyebrow">When &amp; Where</p>
@@ -219,27 +203,6 @@
             </div>
           </dl>
         </article>
-      </div>
-    </section>
-
-    <!-- ============ GALLERY ============ -->
-    <section class="gallery" id="gallery">
-      <p class="eyebrow eyebrow--accent">Captured Moments</p>
-      <h2 class="section-title">Our <em>Gallery</em></h2>
-
-      <div class="gallery__grid" id="galleryGrid">
-        <!-- Photo tiles rendered from config.js -->
-      </div>
-      <p class="gallery__hint" data-i18n="galleryHint">Tap a photo to view it close-up</p>
-    </section>
-
-    <!-- ============ GOOD TO KNOW ============ -->
-    <section class="details" id="details" hidden>
-      <p class="eyebrow eyebrow--accent" data-details-eyebrow>Good to Know</p>
-      <h2 class="section-title">The <em>Details</em></h2>
-
-      <div class="details__cards" id="detailsCards">
-        <!-- Info cards rendered from config.js -->
       </div>
     </section>
 
@@ -264,72 +227,6 @@
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
             allowfullscreen></iframe>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ RSVP ============ -->
-    <section class="rsvp" id="rsvp">
-      <div class="rsvp__panel">
-        <p class="eyebrow eyebrow--light" data-i18n="rsvpEyebrow">Will You Join Us?</p>
-        <h2 class="section-title" data-i18n="rsvpTitle">Kindly <em>Respond</em></h2>
-        <p class="rsvp__note" data-rsvp-note>Kindly respond by 10 October 2026. We can't wait to celebrate with you!</p>
-
-        <form class="rsvp__form" id="rsvpForm" novalidate>
-          <div class="field">
-            <label class="field__label" for="rsvpName" data-i18n="yourName">Your Name</label>
-            <input class="field__input" type="text" id="rsvpName" name="name" autocomplete="name" placeholder="e.g. Rahim Uddin &amp; family" data-i18n-attr="namePlaceholder:placeholder" required />
-          </div>
-
-          <fieldset class="field field--choice">
-            <legend class="field__label" data-i18n="attending">Will you be attending?</legend>
-            <div class="choice">
-              <label class="choice__opt">
-                <input type="radio" name="attending" value="yes" checked />
-                <span data-i18n="yes">Joyfully, yes</span>
-              </label>
-              <label class="choice__opt">
-                <input type="radio" name="attending" value="no" />
-                <span data-i18n="no">Regretfully, no</span>
-              </label>
-            </div>
-          </fieldset>
-
-          <div class="field" id="rsvpGuestsWrap">
-            <label class="field__label" for="rsvpGuests" data-i18n="guestsLabel">Number of Guests</label>
-            <select class="field__input" id="rsvpGuests" name="guests">
-              <option value="1">1 guest</option>
-              <option value="2" selected>2 guests</option>
-              <option value="3">3 guests</option>
-              <option value="4">4 guests</option>
-              <option value="5">5 guests</option>
-              <option value="6">6+ guests</option>
-            </select>
-          </div>
-
-          <fieldset class="field field--choice" id="rsvpEventsWrap">
-            <legend class="field__label" data-i18n="whichEvents">Which events will you attend?</legend>
-            <div class="choice" id="rsvpEvents">
-              <!-- Event checkboxes rendered from config.js -->
-            </div>
-          </fieldset>
-
-          <div class="field">
-            <label class="field__label" for="rsvpMessage" data-i18n="messageLabel">A Message for the Couple <span class="field__optional">(optional)</span></label>
-            <textarea class="field__input field__input--area" id="rsvpMessage" name="message" rows="3" placeholder="Your wishes, duas &amp; blessings…" data-i18n-attr="messagePlaceholder:placeholder"></textarea>
-          </div>
-
-          <button class="rsvp__submit" id="rsvpSubmit" type="submit">
-            <span class="rsvp__submit-label" data-i18n="send">Send RSVP</span>
-          </button>
-        </form>
-
-        <div class="rsvp__done" id="rsvpDone" hidden>
-          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="32" cy="32" r="27" />
-            <path d="M20 33 l8.5 8.5 L44 25" />
-          </svg>
-          <p class="rsvp__done-note" data-rsvp-success>JazakAllah Khair! Your response has been noted — we can't wait to see you.</p>
         </div>
       </div>
     </section>
@@ -404,26 +301,6 @@
     </svg>
     <span class="lang-btn__label" id="langBtnLabel">বাংলা</span>
   </button>
-
-  <!-- Photo lightbox -->
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" data-i18n-attr="lbDialog:aria-label" hidden>
-    <button class="lightbox__close" id="lbClose" type="button" aria-label="Close photo viewer" data-i18n-attr="lbClose:aria-label">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6 l12 12 M18 6 l-12 12"/></svg>
-    </button>
-    <figure class="lightbox__stage">
-      <img class="lightbox__img" id="lbImg" src="" alt="" />
-      <figcaption class="lightbox__caption">
-        <span id="lbCaption"></span>
-        <span id="lbCount"></span>
-      </figcaption>
-    </figure>
-    <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" type="button" aria-label="Previous photo" data-i18n-attr="lbPrev:aria-label">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 l-7 7 7 7"/></svg>
-    </button>
-    <button class="lightbox__nav lightbox__nav--next" id="lbNext" type="button" aria-label="Next photo" data-i18n-attr="lbNext:aria-label">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5 l7 7 -7 7"/></svg>
-    </button>
-  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite">Link copied to clipboard</div>
 
